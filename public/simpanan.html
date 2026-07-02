@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah — Manajemen Simpanan</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS & BASE
+════════════════════════════════════════ */
+:root {
+  --teal-950: #021b4d;
+  --teal-900: #023e8a;
+  --teal-700: #0077b6;
+  --teal-500: #0096c7;
+  --teal-300: #48cae4;
+  --teal-100: #dbf0f8;
+  --teal-50:  #f4f9fc;
+  --gold:     #00b4d8; 
+  --gold-real: #d4af37;
+  --gold-light:#90e0ef;
+  --emerald: #10b981;
+  --danger:  #ef4444;
+  --saffron: #f59e0b;
+  --cream:    #f8fafc;
+  --white:    #ffffff;
+  --ink:      #0f172a;
+  --ink-mid:  #334155;
+  --ink-soft: #64748b;
+  --border:   rgba(2, 62, 138, 0.15);
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-sm: 0 10px 30px rgba(2,17,54,0.03);
+  --shadow-xl: 0 20px 60px rgba(2,17,54,0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: 'Plus Jakarta Sans', sans-serif; 
+  background: radial-gradient(circle at top right, var(--teal-50) 0%, var(--cream) 100%);
+  color: var(--ink); display: flex; height: 100vh; overflow: hidden; 
+}
+a { text-decoration: none; color: inherit; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(2, 62, 138, 0.15); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal-300); }
+
+/* ════════ LAYOUT & SIDEBAR ════════ */
+.sidebar { 
+  width: 280px; background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f);
+  color: #fff; display: flex; flex-direction: column; position: relative; z-index: 20;
+}
+.sidebar-brand { padding: 32px 24px 24px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.sidebar-brand span { background: linear-gradient(90deg, var(--gold-light), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sidebar-nav { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.nav-item { padding: 14px 18px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+.nav-item i { font-size: 20px; }
+.nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+.nav-item.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: inset 4px 0 0 var(--gold-light); }
+
+/* ════════ MAIN CONTENT ════════ */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.header { 
+  display: flex; justify-content: space-between; align-items: center; 
+  padding: 20px 40px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); 
+  border-bottom: 1px solid rgba(255,255,255,0.5); position: sticky; top: 0; z-index: 10;
+}
+.header-name { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+.header-right { display: flex; gap: 16px; align-items: center; }
+.hdr-btn { cursor: pointer; font-size: 20px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); color: var(--teal-900); transition: 0.2s;}
+.hdr-btn:hover { border-color: var(--teal-300); background: var(--teal-50); }
+
+/* ════════ PAGE STYLES ════════ */
+.page-container { padding: 40px; max-width: 1000px; margin: 0 auto; width: 100%; animation: popIn 0.5s ease; }
+@keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+.page-title { font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.5px; }
+.page-desc { color: var(--ink-soft); font-size: 15px; margin-bottom: 32px; }
+
+/* Tabs */
+.tabs { display: flex; gap: 12px; margin-bottom: 24px; background: rgba(255,255,255,0.5); padding: 8px; border-radius: 100px; border: 1px solid var(--border); display: inline-flex; }
+.tab-btn { padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; color: var(--ink-soft); border: none; background: transparent; display: flex; align-items: center; gap: 8px; }
+.tab-btn i { font-size: 18px; }
+.tab-btn.active { background: var(--teal-900); color: #fff; box-shadow: 0 4px 15px rgba(2,62,138,0.2); }
+
+/* Card & Form */
+.card { 
+  background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); 
+  border-radius: var(--radius-xl); border: 1px solid rgba(255,255,255,0.9); 
+  box-shadow: var(--shadow-sm); 
+  overflow: visible;
+}
+.card-body { padding: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; overflow: visible; }
+
+.form-group { margin-bottom: 24px; }
+.form-label { display: block; font-size: 14px; font-weight: 700; color: var(--ink-mid); margin-bottom: 8px; }
+.form-control { width: 100%; padding: 16px; border: 2px solid var(--border); border-radius: var(--radius-md); font-family: inherit; font-size: 15px; color: var(--ink); background: #fff; transition: 0.3s; }
+.form-control:focus { outline: none; border-color: var(--teal-500); box-shadow: 0 0 0 4px rgba(0,150,199,0.1); }
+select.form-control { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 48px; }
+
+.btn-submit { width: 100%; padding: 16px; border-radius: var(--radius-md); font-family: inherit; font-size: 15px; font-weight: 800; cursor: pointer; border: none; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--teal-900); color: #fff; }
+.btn-submit:hover { background: var(--teal-700); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(2,62,138,0.2); }
+.btn-submit:disabled { background: var(--ink-soft); cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Info Panel */
+.info-panel { background: var(--teal-50); border: 1px solid var(--teal-100); border-radius: var(--radius-lg); padding: 24px; height: fit-content; overflow: visible; }
+.info-title { font-size: 16px; font-weight: 800; color: var(--teal-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.info-title i { color: var(--teal-500); font-size: 20px; }
+.info-list { list-style: none; display: flex; flex-direction: column; gap: 12px; overflow: visible; }
+.info-list li { display: flex; gap: 10px; font-size: 14px; color: var(--ink-mid); line-height: 1.5; position: relative; }
+.info-list i { color: var(--emerald); font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.info-list i.ph-warning-circle { color: var(--saffron); }
+
+/* Balance Display (for withdraw) */
+.balance-display { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px; text-align: center; }
+.bd-label { font-size: 12px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.bd-amount { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 800; color: var(--teal-900); }
+
+/* Loader & Toast */
+#loader-overlay { position: fixed; inset: 0; background: var(--cream); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.spinner { width: 40px; height: 40px; border: 4px solid var(--teal-100); border-top: 4px solid var(--teal-900); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.toast { position: fixed; top: 40px; right: 40px; background: var(--teal-900); color: #fff; padding: 16px 24px; border-radius: var(--radius-lg); font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1000; opacity: 0; transform: translateY(-20px); transition: 0.4s; display: flex; align-items: center; gap: 12px; }
+.toast.error { background: var(--danger); }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ---------- TOOLTIP AKAD ---------- */
+.akad-info {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dashed currentColor;
+  display: inline-block;
+  font-weight: 700;
+}
+.akad-info::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--teal-900);
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 9999;
+  text-align: left;
+  font-weight: 400;
+}
+.akad-info:hover::after,
+.akad-info:focus::after {
+  opacity: 1;
+}
+
+/* ---------- MODAL KONFIRMASI PENARIKAN ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 23, 54, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.25s ease;
+  padding: 20px;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-konfirmasi {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  max-width: 480px;
+  width: 100%;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+.modal-header {
+  padding: 28px 32px 0;
+  text-align: center;
+}
+.modal-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 28px;
+}
+.modal-icon.warning {
+  background: #fef3c7;
+  color: #d97706;
+}
+.modal-icon.safe {
+  background: #d1fae5;
+  color: #059669;
+}
+.modal-judul {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.modal-subjudul {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.modal-body {
+  padding: 24px 32px;
+}
+
+.detail-box {
+  background: var(--teal-50);
+  border: 1px solid var(--teal-100);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+}
+.detail-row:not(:last-child) {
+  border-bottom: 1px solid rgba(2, 62, 138, 0.08);
+}
+.detail-label {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.detail-value {
+  font-weight: 700;
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+}
+
+.alert-box {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-left: 4px solid #f59e0b;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.alert-box i {
+  color: #d97706;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.alert-content {
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.6;
+}
+.alert-content strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.modal-footer {
+  padding: 0 32px 28px;
+  display: flex;
+  gap: 12px;
+}
+.btn-konfirmasi {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-konfirmasi.primary {
+  background: var(--teal-900);
+  color: #fff;
+}
+.btn-konfirmasi.primary:hover {
+  background: var(--teal-700);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2,62,138,0.3);
+}
+.btn-konfirmasi.secondary {
+  background: var(--white);
+  color: var(--ink-mid);
+  border: 2px solid var(--border);
+}
+.btn-konfirmasi.secondary:hover {
+  background: var(--teal-50);
+  border-color: var(--teal-300);
+}
+
+@media (max-width: 900px) {
+  .card-body { grid-template-columns: 1fr; gap: 24px; }
+  .modal-konfirmasi { margin: 16px; }
+}
+</style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader-overlay">
+    <div class="spinner"></div>
+    <div style="font-weight: 700; color: var(--teal-900);">Memuat Data Simpanan...</div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">BMT Syahidah<br><span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">Portal Anggota</span></div>
+    <nav class="sidebar-nav">
+       <a href="portal.html" class="nav-item"><i class="ph ph-house"></i> Beranda</a>
+       <a href="dashboard.html" class="nav-item"><i class="ph ph-chart-line-up"></i> Dashboard Wakaf</a>
+       <a href="simpanan.html" class="nav-item active"><i class="ph ph-wallet"></i> Simpanan</a>
+       <a href="pembiayaan.html" class="nav-item"><i class="ph ph-handshake"></i> Pembiayaan</a>
+       <a href="ziswakaf.html" class="nav-item"><i class="ph ph-leaf"></i> ZIS & Wakaf</a>
+       <a href="riwayat.html" class="nav-item"><i class="ph ph-receipt"></i> Riwayat Transaksi</a>
+       <a href="profil.html" class="nav-item"><i class="ph ph-user"></i> Profil Akun</a>
+    </nav>
+  </aside>
+
+  <div class="main-content">
+    <header class="header">
+      <div class="header-name">Manajemen Simpanan</div>
+      <div class="header-right">
+        <button class="hdr-btn" id="btnLogout" title="Keluar"><i class="ph ph-sign-out"></i></button>
+      </div>
+    </header>
+
+    <div class="page-container">
+      <h1 class="page-title">Kelola Dana Keumatan Anda</h1>
+      <p class="page-desc">Lakukan penyetoran atau penarikan dana sesuai dengan akad dan ketentuan produk yang Anda pilih.</p>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('setor')"><i class="ph ph-trend-up"></i> Setor Simpanan</button>
+        <button class="tab-btn" onclick="switchTab('tarik')"><i class="ph ph-trend-down"></i> Tarik Dana</button>
+      </div>
+
+      <!-- FORM SETOR SIMPANAN -->
+      <div id="tab-setor" class="card">
+        <div class="card-body">
+          <div>
+            <div class="form-group">
+              <label class="form-label">Pilih Produk Simpanan</label>
+              <select class="form-control" id="setor-produk" onchange="updateInfoSetor()">
+                <option value="">— Pilih Produk —</option>
+                <option value="syahida">Simpanan Syahida</option>
+                <option value="cerdas">Si Cerdas (Wisuda & Semester)</option>
+                <option value="fitri">Si Fitri (Idul Fitri)</option>
+                <option value="aqur">Si Aqur (Aqikah & Kurban)</option>
+                <option value="mabrur">Si Mabrur (Haji & Umrah)</option>
+                <option value="siberkah">SIBERKAH (Deposito Mudharabah)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nominal Setoran (Rp)</label>
+              <input type="number" class="form-control" id="setor-nominal" placeholder="Masukkan angka tanpa titik">
+            </div>
+            <button class="btn-submit" id="btn-proses-setor" onclick="prosesSetor()"><i class="ph ph-bank"></i> Proses Penyetoran</button>
+          </div>
+          
+          <div class="info-panel" id="info-setor">
+            <div class="info-title"><i class="ph ph-info"></i> Detail Produk</div>
+            <ul class="info-list" id="info-list-setor">
+              <li>Silakan pilih produk simpanan untuk melihat detail akad, minimal setoran, dan aturan penarikan.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM TARIK DANA -->
+      <div id="tab-tarik" class="card" style="display: none;">
+        <div class="card-body">
+          <div>
+            <div class="form-group">
+              <label class="form-label">Pilih Rekening Sumber</label>
+              <select class="form-control" id="tarik-produk" onchange="updateInfoTarik()">
+                <option value="">— Memuat Rekening... —</option>
+              </select>
+            </div>
+
+            <div class="balance-display">
+              <div class="bd-label">Saldo Tersedia</div>
+              <div class="bd-amount" id="tarik-saldo-display">Rp 0</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nominal Penarikan (Rp)</label>
+              <input type="number" class="form-control" id="tarik-nominal" placeholder="Masukkan angka tanpa titik">
+            </div>
+            <button class="btn-submit" id="btn-proses-tarik" onclick="prosesTarik()"><i class="ph ph-wallet"></i> Ajukan Penarikan</button>
+          </div>
+
+          <div class="info-panel">
+            <div class="info-title"><i class="ph ph-shield-check"></i> Ketentuan Penarikan</div>
+            <ul class="info-list" id="info-list-tarik">
+              <li>Pilih rekening untuk melihat syarat dan ketentuan waktu penarikan produk.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast-el">Pesan notifikasi</div>
+
+  <!-- Modal Konfirmasi Penarikan (Custom) -->
+  <div id="modal-konfirmasi-tarik" style="display: none;">
+    <div class="modal-overlay" onclick="event.target === this && closeModalTarik(false)">
+      <div class="modal-konfirmasi">
+        <div class="modal-header">
+          <div class="modal-icon" id="modal-icon-tarik">
+            <i class="ph ph-warning-circle"></i>
+          </div>
+          <div class="modal-judul" id="modal-judul-tarik">Konfirmasi Penarikan</div>
+          <div class="modal-subjudul" id="modal-subjudul-tarik">Mohon periksa kembali detail penarikan Anda.</div>
+        </div>
+        <div class="modal-body">
+          <div class="detail-box">
+            <div class="detail-row">
+              <span class="detail-label">Produk</span>
+              <span class="detail-value" id="modal-produk">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Nominal</span>
+              <span class="detail-value" id="modal-nominal">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Sisa Saldo</span>
+              <span class="detail-value" id="modal-sisa">—</span>
+            </div>
+          </div>
+          <div class="alert-box" id="modal-alert" style="display: none;">
+            <i class="ph ph-warning"></i>
+            <div class="alert-content" id="modal-alert-text"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-konfirmasi secondary" onclick="closeModalTarik(false)">
+            <i class="ph ph-x-circle"></i> Batalkan
+          </button>
+          <button class="btn-konfirmasi primary" id="btn-konfirmasi-tarik" onclick="closeModalTarik(true)">
+            <i class="ph ph-check-circle"></i> Ya, Lanjutkan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+      authDomain: "bmtuwin.firebaseapp.com",
+      projectId: "bmtuwin",
+      storageBucket: "bmtuwin.firebasestorage.app",
+      messagingSenderId: "654364047353",
+      appId: "1:654364047353:web:385871ac2db1d52392ef28"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUserData = null;
+    let currentUserUid = null;
+
+    // Promise resolver untuk modal konfirmasi
+    let modalResolver = null;
+
+    // Basis Data Produk (Aturan Bisnis)
+    const produkRules = {
+      syahida: {
+        nama: "Simpanan Syahida", akad: "Wadiah", minAwal: 50000, minLanjut: 10000,
+        deskripsi: "Dapat diambil kapan saja pada waktu jam kerja.",
+        aturanTarik: "Penarikan bebas kapan saja selama hari kerja tanpa penalti."
+      },
+      cerdas: {
+        nama: "Si Cerdas", akad: "Wadiah", minAwal: 50000, minLanjut: 150000,
+        deskripsi: "Dapat diambil setiap enam bulan sekali pada awal semester dan menjelang wisuda.",
+        aturanTarik: "Hanya dapat ditarik pada awal semester akademik atau menjelang prosesi wisuda."
+      },
+      fitri: {
+        nama: "Si Fitri", akad: "Wadiah", minAwal: 50000, minLanjut: 100000,
+        deskripsi: "Diambil setahun sekali menjelang hari raya Idul Fitri.",
+        aturanTarik: "Hanya dapat ditarik pada bulan Ramadhan / menjelang Idul Fitri."
+      },
+      aqur: {
+        nama: "Si Aqur", akad: "Wadiah", minAwal: 250000, minLanjut: 200000,
+        deskripsi: "Diambil setahun sekali menjelang kelahiran anak atau menjelang hari raya Idul Adha.",
+        aturanTarik: "Penarikan valid untuk persiapan kelahiran anak atau menjelang Idul Adha."
+      },
+      mabrur: {
+        nama: "Si Mabrur", akad: "Wadiah", minAwal: 1000000, minLanjut: 500000,
+        deskripsi: "Jangka waktu 4 tahun, link ke Bank Syariah untuk porsi SISKOHAT.",
+        aturanTarik: "Dana dikunci selama 4 tahun. Penarikan sebelum 4 tahun akan membatalkan program porsi haji."
+      },
+      siberkah: {
+        nama: "SIBERKAH (Deposito)", akad: "Mudharabah Mutlaqoh", minAwal: 1000000, minLanjut: 1000000,
+        deskripsi: "Jangka waktu 6, 12, atau 24 bulan. Dapat di-rollover.",
+        aturanTarik: "Penarikan hanya pada saat jatuh tempo. Penarikan dipercepat menghilangkan hak bagi hasil bulan berjalan."
+      }
+    };
+
+    const akadExplanations = {
+      "Wadiah": `Prinsip Akad Wadiah\nAkad ini adalah titipan murni barang atau uang dari satu pihak (mud'i) kepada pihak lain (mustauda') untuk dijaga dan dikembalikan kapan saja pemilik menghendaki. Prinsip dasarnya adalah amanah, kepercayaan, dan tanggung jawab.`,
+      "Mudharabah Mutlaqoh": `Prinsip Akad Mudharabah Mutlaqah\nAkad ini adalah bentuk kerja sama investasi antara pemilik dana (shahibul maal) dan pengelola (mudharib). Prinsip utamanya adalah kebebasan penuh bagi pengelola untuk menggunakan modal yang diberikan tanpa batasan jenis usaha, waktu, atau lokasi, selama sesuai syariah.`
+    };
+
+    function wrapAkadWithTooltip(akad) {
+      if (!akad || !akadExplanations[akad]) return akad;
+      return `<span class="akad-info" data-tooltip="${akadExplanations[akad].replace(/"/g, '&quot;')}">${akad}</span>`;
+    }
+
+    // ---- MODAL KONFIRMASI TARIK ----
+    function showModalTarik(nominal, rules, sisaSaldo) {
+      return new Promise((resolve) => {
+        modalResolver = resolve;
+        const modal = document.getElementById('modal-konfirmasi-tarik');
+        const icon = document.getElementById('modal-icon-tarik');
+        const alertBox = document.getElementById('modal-alert');
+        const alertText = document.getElementById('modal-alert-text');
+
+        // Set data
+        document.getElementById('modal-produk').textContent = rules.nama;
+        document.getElementById('modal-nominal').textContent = 'Rp ' + nominal.toLocaleString('id-ID');
+        document.getElementById('modal-sisa').textContent = 'Rp ' + sisaSaldo.toLocaleString('id-ID');
+
+        // Tentukan tampilan berdasarkan produk
+        if (rules.akad === 'Wadiah' && rules.nama === 'Simpanan Syahida') {
+          // Produk Syahida — tidak ada peringatan
+          icon.className = 'modal-icon safe';
+          icon.innerHTML = '<i class="ph ph-check-circle"></i>';
+          document.getElementById('modal-judul-tarik').textContent = 'Konfirmasi Penarikan';
+          document.getElementById('modal-subjudul-tarik').textContent = 'Penarikan dari Simpanan Syahida dapat dilakukan kapan saja.';
+          alertBox.style.display = 'none';
+        } else {
+          // Produk non-Syahida — tampilkan peringatan
+          icon.className = 'modal-icon warning';
+          icon.innerHTML = '<i class="ph ph-warning-circle"></i>';
+          document.getElementById('modal-judul-tarik').textContent = '⚠️ Perhatian — Aturan Penarikan';
+          document.getElementById('modal-subjudul-tarik').textContent = 'Produk ini memiliki ketentuan khusus penarikan.';
+          alertBox.style.display = 'flex';
+          alertText.innerHTML = `<strong>Aturan Penarikan:</strong> ${rules.aturanTarik}<br><br>Apakah kondisi saat ini memenuhi syarat penarikan di atas?`;
+        }
+
+        modal.style.display = 'block';
+      });
+    }
+
+    window.closeModalTarik = function(isConfirmed) {
+      document.getElementById('modal-konfirmasi-tarik').style.display = 'none';
+      if (modalResolver) {
+        modalResolver(isConfirmed);
+        modalResolver = null;
+      }
+    };
+
+    // ---- UI SWITCHING TABS ----
+    window.switchTab = function(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById('tab-setor').style.display = tabName === 'setor' ? 'block' : 'none';
+      document.getElementById('tab-tarik').style.display = tabName === 'tarik' ? 'block' : 'none';
+      if(tabName === 'tarik') populateTarikDropdown();
+    };
+
+    // ---- UPDATE INFO SETOR ----
+    window.updateInfoSetor = function() {
+      const pId = document.getElementById('setor-produk').value;
+      const list = document.getElementById('info-list-setor');
+      if(!pId) {
+        list.innerHTML = '<li>Silakan pilih produk simpanan.</li>';
+        return;
+      }
+      const p = produkRules[pId];
+      const existingProduct = currentUserData?.produkSimpanan?.find(x => x.idProduk === pId);
+      const minSetor = existingProduct ? p.minLanjut : p.minAwal;
+      const statusLabel = existingProduct ? "(Setoran Lanjutan)" : "(Setoran Awal)";
+
+      list.innerHTML = `
+        <li><i class="ph ph-check-circle"></i> Berdasarkan prinsip akad ${wrapAkadWithTooltip(p.akad)}.</li>
+        <li><i class="ph ph-check-circle"></i> Bebas biaya administrasi bulanan.</li>
+        <li><i class="ph ph-check-circle"></i> Minimum setoran: Rp ${minSetor.toLocaleString('id-ID')} ${statusLabel}.</li>
+        <li><i class="ph ph-clock"></i> ${p.deskripsi}</li>
+      `;
+    };
+
+    // ---- UPDATE INFO TARIK ----
+    window.updateInfoTarik = function() {
+      const pId = document.getElementById('tarik-produk').value;
+      const list = document.getElementById('info-list-tarik');
+      const saldoDisplay = document.getElementById('tarik-saldo-display');
+      
+      if(!pId) {
+        list.innerHTML = '<li>Pilih rekening untuk melihat aturan penarikan.</li>';
+        saldoDisplay.textContent = 'Rp 0';
+        return;
+      }
+
+      const product = currentUserData.produkSimpanan.find(x => x.idProduk === pId);
+      const rules = produkRules[pId];
+      
+      saldoDisplay.textContent = `Rp ${product.saldo.toLocaleString('id-ID')}`;
+      list.innerHTML = `
+        <li><i class="ph ph-check-circle"></i> Saldo tersedia untuk produk ${rules.nama}.</li>
+        <li><i class="ph ph-warning-circle"></i> <strong>Aturan Penarikan:</strong> ${rules.aturanTarik}</li>
+        <li><i class="ph ph-info"></i> Pastikan pengajuan penarikan sesuai dengan waktu yang disepakati dalam akad.</li>
+      `;
+    };
+
+    function populateTarikDropdown() {
+      const select = document.getElementById('tarik-produk');
+      select.innerHTML = '<option value="">— Pilih Rekening Sumber —</option>';
+      
+      if(!currentUserData || !currentUserData.produkSimpanan || currentUserData.produkSimpanan.length === 0) {
+        select.innerHTML = '<option value="">— Anda belum memiliki simpanan —</option>';
+        return;
+      }
+
+      currentUserData.produkSimpanan.forEach(prod => {
+        if(prod.saldo > 0) {
+          select.innerHTML += `<option value="${prod.idProduk}">${prod.namaProduk} (Rp ${prod.saldo.toLocaleString('id-ID')})</option>`;
+        }
+      });
+    }
+
+    // ---- AUTH CHECK ----
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUserUid = user.uid;
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          currentUserData = userSnap.data();
+          if(!currentUserData.produkSimpanan) currentUserData.produkSimpanan = [];
+          document.getElementById('loader-overlay').style.display = 'none';
+        } else {
+          showToast("Data profil tidak ditemukan.", "error");
+        }
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    // ---- PROSES SETOR ----
+    window.prosesSetor = async function() {
+      const pId = document.getElementById('setor-produk').value;
+      const nominalInput = document.getElementById('setor-nominal').value;
+      const nominal = parseInt(nominalInput);
+      const btn = document.getElementById('btn-proses-setor');
+
+      if(!pId) return showToast("Pilih produk simpanan terlebih dahulu.", "error");
+      if(!nominal || isNaN(nominal) || nominal <= 0) return showToast("Masukkan nominal yang valid.", "error");
+
+      const rules = produkRules[pId];
+      const prodIndex = currentUserData.produkSimpanan.findIndex(x => x.idProduk === pId);
+      const isNew = prodIndex === -1;
+      const minRequired = isNew ? rules.minAwal : rules.minLanjut;
+
+      if(nominal < minRequired) {
+        return showToast(`Minimum setoran untuk ${isNew ? 'awal' : 'lanjutan'} produk ini adalah Rp ${minRequired.toLocaleString('id-ID')}`, "error");
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Memproses...';
+
+      try {
+        let updatedProdukArray = [...currentUserData.produkSimpanan];
+        let newTotalSaldo = (currentUserData.totalSaldo || 0) + nominal;
+
+        if(isNew) {
+          updatedProdukArray.push({
+            idProduk: pId,
+            namaProduk: rules.nama,
+            akad: rules.akad,
+            saldo: nominal
+          });
+        } else {
+          updatedProdukArray[prodIndex].saldo += nominal;
+        }
+
+        const userRef = doc(db, "users", currentUserUid);
+        await updateDoc(userRef, {
+          produkSimpanan: updatedProdukArray,
+          totalSaldo: newTotalSaldo
+        });
+
+        await addDoc(collection(db, `users/${currentUserUid}/mutasi`), {
+          judul: `Setor Tunai — ${rules.nama}`,
+          nominal: nominal,
+          tipe: 'masuk',
+          tanggal: serverTimestamp()
+        });
+
+        currentUserData.produkSimpanan = updatedProdukArray;
+        currentUserData.totalSaldo = newTotalSaldo;
+
+        showToast("Setoran berhasil ditambahkan!");
+        document.getElementById('setor-nominal').value = '';
+        updateInfoSetor();
+
+      } catch (error) {
+        showToast("Terjadi kesalahan sistem.", "error");
+        console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ph ph-bank"></i> Proses Penyetoran';
+      }
+    };
+
+    // ---- PROSES TARIK (DENGAN MODAL KUSTOM) ----
+    window.prosesTarik = async function() {
+      const pId = document.getElementById('tarik-produk').value;
+      const nominalInput = document.getElementById('tarik-nominal').value;
+      const nominal = parseInt(nominalInput);
+      const btn = document.getElementById('btn-proses-tarik');
+
+      if(!pId) return showToast("Pilih rekening sumber terlebih dahulu.", "error");
+      if(!nominal || isNaN(nominal) || nominal <= 0) return showToast("Masukkan nominal penarikan yang valid.", "error");
+
+      const prodIndex = currentUserData.produkSimpanan.findIndex(x => x.idProduk === pId);
+      const selectedProduct = currentUserData.produkSimpanan[prodIndex];
+      const rules = produkRules[pId];
+
+      if(nominal > selectedProduct.saldo) {
+        return showToast("Saldo tidak mencukupi untuk penarikan ini.", "error");
+      }
+
+      const sisaSaldo = selectedProduct.saldo - nominal;
+
+      // Tampilkan modal konfirmasi kustom dan tunggu respons
+      const dikonfirmasi = await showModalTarik(nominal, rules, sisaSaldo);
+      if (!dikonfirmasi) return;
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Memproses...';
+
+      try {
+        let updatedProdukArray = [...currentUserData.produkSimpanan];
+        let newTotalSaldo = (currentUserData.totalSaldo || 0) - nominal;
+
+        updatedProdukArray[prodIndex].saldo -= nominal;
+
+        const userRef = doc(db, "users", currentUserUid);
+        await updateDoc(userRef, {
+          produkSimpanan: updatedProdukArray,
+          totalSaldo: newTotalSaldo
+        });
+
+        await addDoc(collection(db, `users/${currentUserUid}/mutasi`), {
+          judul: `Tarik Dana — ${rules.nama}`,
+          nominal: nominal,
+          tipe: 'keluar',
+          tanggal: serverTimestamp()
+        });
+
+        currentUserData.produkSimpanan = updatedProdukArray;
+        currentUserData.totalSaldo = newTotalSaldo;
+
+        showToast("Penarikan berhasil diproses!");
+        document.getElementById('tarik-nominal').value = '';
+        populateTarikDropdown();
+        updateInfoTarik();
+
+      } catch (error) {
+        showToast("Terjadi kesalahan sistem.", "error");
+        console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ph ph-wallet"></i> Ajukan Penarikan';
+      }
+    };
+
+    // ---- UTILITY TOAST ----
+    let tTimer;
+    function showToast(msg, type = 'success') {
+      const el = document.getElementById('toast-el');
+      el.innerHTML = type === 'success' 
+        ? `<i class="ph ph-check-circle" style="font-size:20px; color:var(--emerald)"></i> ${msg}` 
+        : `<i class="ph ph-warning-circle" style="font-size:20px;"></i> ${msg}`;
+      if (type === 'error') el.classList.add('error'); 
+      else el.classList.remove('error');
+      el.classList.add('show');
+      clearTimeout(tTimer);
+      tTimer = setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
+    // ---- LOGOUT ----
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      signOut(auth).then(() => window.location.href = 'login.html');
+    });
+  </script>
+</body>
+</html>

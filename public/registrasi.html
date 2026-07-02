@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah IKALUIN — Daftar Akun</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS & BASE
+════════════════════════════════════════ */
+:root {
+  --teal-950: #021b4d;
+  --teal-900: #023e8a;
+  --teal-700: #0077b6;
+  --teal-500: #0096c7;
+  --teal-300: #48cae4;
+  --teal-100: #dbf0f8;
+  --teal-50:  #f4f9fc;
+  --gold:     #00b4d8;
+  --gold-light:#90e0ef;
+  --gold-pale:#dcf3fa;
+  --cream:    #f8fafc;
+  --cream-d:  #e7f1f7;
+  --sand:     #e7f1f7;
+  --white:    #ffffff;
+  --ink:      #0f172a;
+  --ink-mid:  #334155;
+  --muted:    #64748b;
+  --faint:    #9ca3af;
+  --border:   rgba(0,119,182,0.15);
+  --danger:   #ef4444;
+  --danger-bg:#fef2f2;
+  --success:  #10b981;
+  --success-bg:#ecfdf5;
+  --r-xl: 24px;
+  --r-lg: 16px;
+  --r-md: 12px;
+  --r-sm: 8px;
+  --shadow-sm: 0 4px 20px rgba(2,62,138,0.05);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ════ ANIMATIONS ════ */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes floatSmooth {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes popIn { 
+  from {transform:scale(0.5);opacity:0} 
+  to {transform:scale(1);opacity:1} 
+}
+@keyframes spin { 
+  100% { transform: rotate(360deg); } 
+}
+
+/* ════ SPLIT LAYOUT ════ */
+.left-panel {
+  width: 440px;
+  flex-shrink: 0;
+  background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f);
+  background-size: 300% 300%;
+  animation: gradientShift 15s ease infinite;
+  display: flex;
+  flex-direction: column;
+  padding: 56px 48px;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow: hidden;
+  color: #fff;
+  box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.left-panel::before {
+  content: ''; position: absolute; bottom: -10%; right: -20%;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,180,216,0.2) 0%, transparent 70%);
+  filter: blur(40px); pointer-events: none;
+}
+.left-panel::after {
+  content: 'بِسْمِ اللَّهِ';
+  font-family: 'Amiri', serif; font-size: 120px; color: rgba(255,255,255,0.02);
+  position: absolute; right: -20px; top: 20%; transform: rotate(-90deg);
+  white-space: nowrap; pointer-events: none;
+}
+
+.brand { margin-bottom: 56px; position: relative; z-index: 1; animation: floatSmooth 6s ease-in-out infinite; }
+.brand-arabic { font-family: 'Amiri', serif; font-size: 22px; color: var(--gold-light); margin-bottom: 8px; letter-spacing: 1px; }
+.brand-name { font-size: 28px; font-weight: 800; line-height: 1.1; }
+.brand-sub { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 8px; line-height: 1.5; font-weight: 500; }
+
+/* Stepper */
+.stepper { display: flex; flex-direction: column; position: relative; z-index: 1; flex: 1; }
+.step-item { display: flex; gap: 16px; align-items: flex-start; padding-bottom: 32px; position: relative; }
+.step-item:last-child { padding-bottom: 0; }
+.step-item:not(:last-child)::before {
+  content: ''; position: absolute; left: 15px; top: 36px; width: 2px; height: calc(100% - 28px);
+  background: rgba(255,255,255,0.1); transition: background 0.4s;
+}
+.step-item.done:not(:last-child)::before { background: var(--teal-500); }
+
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.05); backdrop-filter: blur(5px);
+  transition: all 0.4s ease; position: relative; z-index: 1;
+}
+.step-item.done .step-circle { background: var(--teal-500); border-color: var(--teal-500); color: #fff; box-shadow: 0 0 15px rgba(0, 150, 199, 0.4); }
+.step-item.active .step-circle { background: #fff; border-color: #fff; color: var(--teal-900); transform: scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+
+.step-text { padding-top: 4px; }
+.step-label { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.4); transition: color 0.3s; }
+.step-item.done .step-label { color: var(--gold-light); }
+.step-item.active .step-label { color: #fff; }
+.step-desc { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; line-height: 1.5; }
+.step-item.active .step-desc { color: rgba(255,255,255,0.7); }
+
+.panel-footer { position: relative; z-index: 1; margin-top: auto; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); }
+.panel-footer-text { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+.panel-footer-link { color: var(--gold-light); cursor: pointer; font-weight: 700; transition: color 0.3s; }
+.panel-footer-link:hover { color: #fff; }
+
+/* ════ RIGHT PANEL ════ */
+.right-panel {
+  margin-left: 440px; flex: 1; display: flex; align-items: flex-start; justify-content: center;
+  padding: 56px 40px; min-height: 100vh;
+  background: radial-gradient(circle at top right, var(--teal-50) 0%, var(--cream) 100%);
+}
+
+.form-container { width: 100%; max-width: 580px; }
+
+/* Step Header */
+.step-header { margin-bottom: 40px; animation: popIn 0.5s ease; }
+.step-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--teal-500); margin-bottom: 12px; }
+.step-main-title { font-size: 32px; font-weight: 800; color: var(--ink); line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.5px; }
+.step-main-desc { font-size: 15px; color: var(--muted); line-height: 1.6; }
+
+/* Progress bar */
+.progress-bar-top { height: 6px; background: var(--cream-d); border-radius: 99px; overflow: hidden; margin-bottom: 40px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
+.progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--teal-700), var(--teal-300), var(--gold)); transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+
+/* ════ FORM ELEMENTS ════ */
+.step-content { animation: popIn 0.5s ease; }
+.form-section { margin-bottom: 32px; background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); padding: 24px; border-radius: var(--r-xl); border: 1px solid rgba(255,255,255,0.8); box-shadow: var(--shadow-sm); }
+.section-title-sm { font-size: 13px; font-weight: 800; color: var(--teal-900); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
+
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field.full { grid-column: 1 / -1; }
+
+.flabel { font-size: 13px; font-weight: 700; color: var(--ink-mid); display: flex; align-items: center; gap: 6px; }
+.required-star { color: var(--danger); font-size: 14px; }
+.optional-tag { font-size: 11px; font-weight: 600; color: var(--faint); background: var(--cream-d); padding: 2px 8px; border-radius: 6px; }
+
+.finput, .fselect {
+  padding: 14px 16px; border: 2px solid var(--border); border-radius: var(--r-md);
+  font-family: inherit; font-size: 14px; color: var(--ink); background: #fff;
+  outline: none; transition: all 0.3s; width: 100%;
+}
+.finput:focus, .fselect:focus { border-color: var(--teal-500); box-shadow: 0 0 0 4px rgba(0,150,199,0.1); transform: translateY(-2px); }
+.finput::placeholder { color: var(--faint); }
+.finput.error, .fselect.error { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(239,68,68,0.1); }
+
+/* Input with action */
+.input-wrap { position: relative; }
+.input-wrap .finput { padding-left: 16px; }
+.input-action { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 800; color: var(--teal-500); cursor: pointer; padding: 6px 10px; border-radius: 8px; background: var(--teal-50); transition: all 0.2s; }
+.input-action:hover { background: var(--teal-100); color: var(--teal-900); }
+
+.field-hint { font-size: 12px; color: var(--faint); line-height: 1.5; margin-top: 4px; font-weight: 500; }
+.field-error { font-size: 12px; color: var(--danger); margin-top: 4px; font-weight: 600; display: none; }
+.field-error.show { display: block; }
+
+/* Status Keanggotaan tiles */
+.membership-tiles { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.mem-tile {
+  background: #fff; border: 2px solid var(--border); border-radius: var(--r-lg); padding: 16px 12px;
+  cursor: pointer; transition: all 0.3s; text-align: center;
+}
+.mem-tile:hover { border-color: var(--teal-300); transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+.mem-tile.selected { border-color: var(--teal-700); background: var(--teal-50); box-shadow: 0 0 0 4px rgba(0,150,199,0.1); transform: translateY(-3px); }
+.mem-icon { font-size: 28px; margin-bottom: 8px; display: block; transition: transform 0.3s; }
+.mem-tile:hover .mem-icon { transform: scale(1.1); }
+.mem-label { font-size: 13px; font-weight: 800; color: var(--ink); }
+.mem-sub { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+/* Password strength */
+.pw-strength-bar { display: flex; gap: 6px; margin-top: 10px; }
+.pw-seg { height: 5px; flex: 1; border-radius: 99px; background: var(--border); transition: background 0.4s; }
+.pw-seg.weak { background: var(--danger); }
+.pw-seg.medium { background: var(--gold); }
+.pw-seg.strong { background: var(--success); }
+.pw-strength-label { font-size: 12px; font-weight: 600; margin-top: 6px; color: var(--faint); }
+
+/* ════ UPLOAD ZONE ════ */
+.upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.upload-zone {
+  border: 2px dashed var(--teal-300); border-radius: var(--r-xl); padding: 28px 20px;
+  text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.7); position: relative;
+}
+.upload-zone:hover { border-color: var(--teal-500); background: #fff; transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.upload-zone.has-file { border-color: var(--success); border-style: solid; background: var(--success-bg); }
+.upload-zone.missing { border-color: var(--danger); background: var(--danger-bg); }
+.upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.upload-icon { font-size: 32px; margin-bottom: 12px; }
+.upload-title { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.upload-hint { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.upload-check { font-size: 24px; display: none; margin-bottom: 8px; }
+.upload-filename { font-size: 12px; font-weight: 700; color: var(--success); display: none; }
+.upload-zone.has-file .upload-icon, .upload-zone.has-file .upload-hint { display: none; }
+.upload-zone.has-file .upload-check, .upload-zone.has-file .upload-filename { display: block; }
+.upload-zone.has-file .upload-title { color: var(--success); }
+
+/* Selfie frame */
+.selfie-zone {
+  border: 2px dashed var(--teal-300); border-radius: 50%; width: 140px; height: 140px;
+  margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; flex-direction: column;
+  cursor: pointer; transition: all 0.3s; position: relative; background: #fff;
+}
+.selfie-zone:hover { border-color: var(--teal-500); box-shadow: var(--shadow-sm); transform: scale(1.05); }
+.selfie-zone.missing { border-color: var(--danger); background: var(--danger-bg); }
+.selfie-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; border-radius: 50%; }
+.selfie-icon { font-size: 40px; margin-bottom: 4px; }
+.selfie-label { font-size: 12px; font-weight: 600; color: var(--muted); text-align: center; }
+
+/* ════ KONFIRMASI STEP ════ */
+.konfirm-body { background: #fff; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+.konfirm-row { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+.konfirm-row:last-child { border-bottom: none; }
+.konfirm-row-label { font-size: 13px; font-weight: 600; color: var(--muted); width: 180px; flex-shrink: 0; }
+.konfirm-row-val { font-size: 14px; font-weight: 800; color: var(--ink); flex: 1; }
+.konfirm-row-badge { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; }
+.badge-green { background: var(--teal-100); color: var(--teal-900); }
+
+/* Akad box */
+.akad-consent { background: linear-gradient(135deg, #fff, var(--teal-50)); border: 1px solid var(--teal-300); border-radius: var(--r-xl); padding: 24px; margin: 32px 0 24px; position: relative; overflow: hidden; }
+.akad-consent::before { content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: rgba(0,180,216,0.1); border-radius: 50%; }
+.akad-arabic { font-family: 'Amiri', serif; font-size: 24px; color: var(--teal-900); text-align: center; margin-bottom: 12px; line-height: 1.8; }
+.akad-text { font-size: 13px; color: var(--ink-mid); line-height: 1.8; font-weight: 500; }
+
+/* Checkbox */
+.check-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.check-row input[type=checkbox] { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: var(--teal-700); cursor: pointer; }
+.check-label { font-size: 13px; font-weight: 600; color: var(--ink-mid); line-height: 1.6; cursor: pointer; }
+.check-link { color: var(--teal-700); font-weight: 800; text-decoration: underline; cursor: pointer; transition: color 0.3s; }
+.check-link:hover { color: var(--gold); }
+
+/* ════ BUTTONS ════ */
+.btn-row { display: flex; gap: 16px; margin-top: 40px; }
+.btn-next {
+  flex: 1; padding: 16px 24px; background: var(--teal-900); color: #fff;
+  border: none; border-radius: var(--r-md); font-family: inherit; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  position: relative; overflow: hidden;
+}
+.btn-next::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease;
+}
+.btn-next:hover::before { left: 100%; }
+.btn-next:hover { background: var(--teal-700); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(2, 62, 138, 0.3); }
+.btn-next:disabled { background: var(--muted); cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.7; }
+
+.btn-back {
+  padding: 16px 24px; background: #fff; color: var(--teal-900);
+  border: 2px solid var(--border); border-radius: var(--r-md);
+  font-family: inherit; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+}
+.btn-back:hover { background: var(--cream-d); border-color: var(--teal-300); transform: translateX(-3px); }
+
+/* ════ SUCCESS STATE ════ */
+.success-screen { text-align: center; padding: 20px 0; animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+.success-ring {
+  width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--teal-100), #fff);
+  box-shadow: inset 0 0 20px rgba(0,180,216,0.2), 0 10px 30px rgba(0,0,0,0.05);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 48px;
+}
+.success-title { font-size: 32px; font-weight: 800; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.5px; }
+.success-sub { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 440px; margin: 0 auto 32px; }
+
+/* ════ TOAST ════ */
+.toast {
+  position: fixed; top: 40px; right: 50%; transform: translateX(50%) translateY(-20px);
+  background: var(--teal-900); color: #fff; padding: 16px 32px; border-radius: var(--r-lg);
+  font-size: 14px; font-weight: 700; box-shadow: 0 20px 40px rgba(2,62,138,0.25);
+  z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; gap: 12px;
+}
+.toast.error { background: var(--danger); box-shadow: 0 20px 40px rgba(239, 68, 68, 0.25); }
+.toast.show { transform: translateX(50%) translateY(0); opacity: 1; visibility: visible; }
+
+/* Loading Spinner */
+.spinner {
+  border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid #fff;
+  width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; margin-left: 8px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .left-panel { display: none; }
+  .right-panel { margin-left: 0; padding: 40px 20px; }
+  .form-container { width: 100%; max-width: 100%; }
+  .field-grid, .upload-grid, .membership-tiles { grid-template-columns: 1fr; }
+  .konfirm-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .konfirm-row-label { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<aside class="left-panel">
+  <div class="brand">
+    <div class="brand-arabic">بيت المال والتمويل</div>
+    <div class="brand-name">BMT Syahidah<br>IKALUIN</div>
+    <div class="brand-sub">Koperasi Syariah Alumni<br>UIN Syarif Hidayatullah Jakarta</div>
+  </div>
+
+  <div class="stepper" id="stepper">
+    <div class="step-item active" id="step-item-1">
+      <div class="step-circle" id="sc-1">1</div>
+      <div class="step-text">
+        <div class="step-label">Data Diri & Akun</div>
+        <div class="step-desc">Identitas dan kredensial login</div>
+      </div>
+    </div>
+    <div class="step-item" id="step-item-2">
+      <div class="step-circle" id="sc-2">2</div>
+      <div class="step-text">
+        <div class="step-label">Dokumen Wajib</div>
+        <div class="step-desc">Upload e-KTP, KK, dan Pas Foto</div>
+      </div>
+    </div>
+    <div class="step-item" id="step-item-3">
+      <div class="step-circle" id="sc-3">3</div>
+      <div class="step-text">
+        <div class="step-label">Konfirmasi Data</div>
+        <div class="step-desc">Baca akad & kirim pendaftaran</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-footer">
+    <div class="panel-footer-text">
+      Sudah memiliki akun?<br>
+      <span class="panel-footer-link" onclick="window.location.href='login.html'">Masuk ke Portal Anggota →</span>
+    </div>
+  </div>
+</aside>
+
+<main class="right-panel">
+  <div class="form-container">
+
+    <div class="progress-bar-top" id="progress-container">
+      <div class="progress-fill" id="progress-fill" style="width:33.33%"></div>
+    </div>
+
+    <div id="step-1" class="step-content">
+      <div class="step-header">
+        <div class="step-eyebrow">Langkah 1 dari 3</div>
+        <div class="step-main-title">Profil & Akun Portal</div>
+        <div class="step-main-desc">Mulai dengan mengisi identitas resmi Anda dan buat kredensial untuk mengakses portal digital BMT Syahidah.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title-sm">Identitas Diri</div>
+        <div class="field-grid">
+          <div class="field full">
+            <label class="flabel">Nama Lengkap Sesuai KTP <span class="required-star">*</span></label>
+            <input class="finput" type="text" placeholder="Contoh: Muhammad Rizky Pratama" id="f-nama">
+          </div>
+          <div class="field">
+            <label class="flabel">Nomor Induk Kependudukan <span class="required-star">*</span></label>
+            <input class="finput" type="text" placeholder="16 digit angka NIK" id="f-nik" maxlength="16" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          </div>
+          <div class="field">
+            <label class="flabel">Jenis Kelamin <span class="required-star">*</span></label>
+            <select class="fselect" id="f-jk">
+              <option value="">— Pilih —</option>
+              <option>Laki-laki</option>
+              <option>Perempuan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title-sm">Status Keanggotaan</div>
+        <div class="membership-tiles" id="membership-tiles">
+          <div class="mem-tile selected" onclick="selectMem(this, 'Alumni')">
+            <span class="mem-icon">🎓</span>
+            <div class="mem-label">Alumni</div>
+            <div class="mem-sub">Lulusan UIN Jkt</div>
+          </div>
+          <div class="mem-tile" onclick="selectMem(this, 'Mahasiswa')">
+            <span class="mem-icon">📚</span>
+            <div class="mem-label">Mahasiswa</div>
+            <div class="mem-sub">Mahasiswa Aktif</div>
+          </div>
+          <div class="mem-tile" onclick="selectMem(this, 'Dosen/Pegawai')">
+            <span class="mem-icon">👔</span>
+            <div class="mem-label">Sivitas</div>
+            <div class="mem-sub">Dosen/Pegawai</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title-sm">Kredensial Akun (Firebase)</div>
+        <div class="field-grid">
+          <div class="field full">
+            <label class="flabel">Alamat Email <span class="required-star">*</span></label>
+            <input class="finput" type="email" placeholder="nama@email.com" id="f-email">
+            <div class="field-hint">Email ini akan digunakan untuk login ke portal.</div>
+          </div>
+          <div class="field">
+            <label class="flabel">Kata Sandi <span class="required-star">*</span></label>
+            <div class="input-wrap">
+              <input class="finput" type="password" placeholder="Minimal 8 karakter" id="f-pw" oninput="checkPw(this)">
+              <span class="input-action" onclick="togglePw('f-pw')">Lihat</span>
+            </div>
+            <div class="pw-strength-bar">
+              <div class="pw-seg" id="ps1"></div><div class="pw-seg" id="ps2"></div>
+              <div class="pw-seg" id="ps3"></div><div class="pw-seg" id="ps4"></div>
+            </div>
+            <div class="pw-strength-label" id="pw-label">Kekuatan sandi</div>
+          </div>
+          <div class="field">
+            <label class="flabel">Ulangi Kata Sandi <span class="required-star">*</span></label>
+            <div class="input-wrap">
+              <input class="finput" type="password" placeholder="Ketik ulang sandi" id="f-pw2">
+              <span class="input-action" onclick="togglePw('f-pw2')">Lihat</span>
+            </div>
+            <div class="field-error" id="pw-match-err">Kata sandi tidak cocok.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-next" onclick="checkStep1()">Lanjutkan ke Dokumen →</button>
+      </div>
+      <div style="text-align:center; margin-top:24px; font-size:14px; color:var(--muted); font-weight:600;">
+        Sudah memiliki akun? <span style="color:var(--teal-700); cursor:pointer;" onclick="window.location.href='login.html'">Masuk disini</span>
+      </div>
+    </div>
+
+    <div id="step-2" class="step-content" style="display:none">
+      <div class="step-header">
+        <div class="step-eyebrow">Langkah 2 dari 3</div>
+        <div class="step-main-title">Verifikasi Dokumen</div>
+        <div class="step-main-desc">Sesuai prinsip KYC (Know Your Customer) Syariah, mohon unggah dokumen identitas Anda.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title-sm">Dokumen Wajib</div>
+        <div class="upload-grid">
+          <div class="upload-zone" id="uz-ktp">
+            <input type="file" accept="image/*,application/pdf" onchange="fileSelected(this,'uz-ktp','fn-ktp')">
+            <div class="upload-check">✅</div>
+            <div class="upload-icon">🪪</div>
+            <div class="upload-title">KTP (e-KTP)</div>
+            <div class="upload-hint">Foto KTP asli jelas<br>Maks. 5 MB</div>
+            <div class="upload-filename" id="fn-ktp"></div>
+          </div>
+          <div class="upload-zone" id="uz-kk">
+            <input type="file" accept="image/*,application/pdf" onchange="fileSelected(this,'uz-kk','fn-kk')">
+            <div class="upload-check">✅</div>
+            <div class="upload-icon">📄</div>
+            <div class="upload-title">Kartu Keluarga</div>
+            <div class="upload-hint">Foto/scan KK<br>Maks. 5 MB</div>
+            <div class="upload-filename" id="fn-kk"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title-sm">Pas Foto Terbaru</div>
+        <div style="text-align:center">
+          <div class="selfie-zone" id="uz-foto">
+            <input type="file" accept="image/*" capture="user" onchange="fileSelected(this,'uz-foto','fn-foto')">
+            <div class="upload-check" id="selfie-check" style="display:none; font-size:40px;">✅</div>
+            <div class="selfie-icon" id="selfie-icon">🤳</div>
+            <div class="selfie-label" id="selfie-label">Pas Foto<br>Bebas Rapi</div>
+          </div>
+          <div class="upload-filename" id="fn-foto" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(1)">← Kembali</button>
+        <button class="btn-next" onclick="checkStep2()">Lanjutkan ke Konfirmasi →</button>
+      </div>
+    </div>
+
+    <div id="step-3" class="step-content" style="display:none">
+      <div class="step-header">
+        <div class="step-eyebrow">Langkah 3 dari 3</div>
+        <div class="step-main-title">Validasi & Akad</div>
+        <div class="step-main-desc">Periksa kembali ringkasan data Anda dan setujui akad keanggotaan BMT Syahidah.</div>
+      </div>
+
+      <div class="form-section" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="konfirm-body">
+          <div class="konfirm-row">
+            <span class="konfirm-row-label">Nama & NIK</span>
+            <span class="konfirm-row-val"><span id="k-nama"></span> <span style="color:var(--faint); font-weight:500;">(<span id="k-nik"></span>)</span></span>
+          </div>
+          <div class="konfirm-row">
+            <span class="konfirm-row-label">Status Anggota</span>
+            <span class="konfirm-row-val"><span class="konfirm-row-badge badge-green" id="k-status"></span></span>
+          </div>
+          <div class="konfirm-row">
+            <span class="konfirm-row-label">Akun Email (Login)</span>
+            <span class="konfirm-row-val" id="k-email" style="color:var(--teal-700);"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="akad-consent">
+        <div class="akad-arabic">إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ</div>
+        <div class="akad-text">
+          Saya menyatakan mendaftarkan diri sebagai anggota <strong>BMT Syahidah IKALUIN</strong> dengan penuh kesadaran. Saya bersedia mematuhi AD/ART, menyetorkan simpanan wajib, dan bertransaksi sesuai syariat Islam tanpa unsur Riba, Gharar, dan Maysir.
+        </div>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="chk-akad">
+        <label class="check-label" for="chk-akad">Saya setuju dengan <span class="check-link">Akad Keanggotaan</span> dan mengonfirmasi bahwa data yang diisi adalah benar.</label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(2)" id="btn-back-3">← Kembali</button>
+        <button class="btn-next" onclick="prosesPendaftaran()" id="btn-submit">Bismillah, Buat Akun</button>
+      </div>
+    </div>
+
+    <div id="step-4" class="step-content" style="display:none">
+      <div class="success-screen">
+        <div class="success-ring">✨</div>
+        <div style="font-family:'Amiri',serif;font-size:24px;color:var(--teal-700);margin-bottom:16px; font-weight:700;">بَارَكَ اللهُ لَكَ</div>
+        <div class="success-title">Alhamdulillah, Akun Terdaftar!</div>
+        <div class="success-sub">Akun portal digital BMT Syahidah Anda telah berhasil dibuat menggunakan Firebase Authentication.</div>
+        
+        <div class="form-section" style="text-align:left; max-width:400px; margin: 0 auto 32px;">
+          <div style="font-size:14px; font-weight:800; color:var(--ink); margin-bottom:12px;">Langkah Selanjutnya:</div>
+          <ul style="padding-left:20px; font-size:13px; color:var(--ink-mid); line-height:1.7; display:flex; flex-direction:column; gap:8px;">
+            <li>Cek email Anda untuk verifikasi (opsional).</li>
+            <li>Admin kami akan memvalidasi dokumen KTP & KK Anda dalam 1x24 jam kerja.</li>
+            <li>Silakan masuk ke Portal untuk melakukan instruksi pembayaran Setoran Awal.</li>
+          </ul>
+        </div>
+
+        <button class="btn-next" style="max-width:300px; margin:0 auto;" onclick="window.location.href='login.html'">Masuk ke Portal →</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+let currentStep = 1;
+let userStatus = "Alumni";
+
+function goStep(n) {
+  document.querySelectorAll('.step-content').forEach(el => el.style.display = 'none');
+  document.getElementById('step-' + n).style.display = 'block';
+  currentStep = n;
+  
+  if(n <= 3) {
+    updateStepper(n);
+    document.getElementById('progress-fill').style.width = (n * 33.33) + '%';
+    document.getElementById('progress-container').style.display = 'block';
+    document.getElementById('stepper').style.display = 'flex';
+  } else {
+    document.getElementById('progress-container').style.display = 'none';
+    document.getElementById('stepper').style.display = 'none';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateStepper(n) {
+  for (let i = 1; i <= 3; i++) {
+    const item = document.getElementById('step-item-' + i);
+    const circle = document.getElementById('sc-' + i);
+    item.className = 'step-item';
+    if (i < n) {
+      item.classList.add('done'); circle.textContent = '✓';
+    } else if (i === n) {
+      item.classList.add('active'); circle.textContent = i;
+    } else {
+      circle.textContent = i;
+    }
+  }
+}
+
+function selectMem(el, status) {
+  document.querySelectorAll('.mem-tile').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+  userStatus = status;
+}
+
+function togglePw(id) {
+  const el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+function checkPw(input) {
+  const v = input.value;
+  let score = 0;
+  if (v.length >= 8) score++;
+  if (/[A-Z]/.test(v) || /[0-9]/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  
+  const segs = ['ps1','ps2','ps3','ps4'];
+  const levels = ['','weak','medium','strong'];
+  segs.forEach((id,i) => {
+    document.getElementById(id).className = 'pw-seg ' + (i < score ? levels[score] : '');
+  });
+}
+
+function fileSelected(input, zoneId, fnId) {
+  if (!input.files[0]) return;
+  const zone = document.getElementById(zoneId);
+  zone.classList.add('has-file'); zone.classList.remove('missing');
+  document.getElementById(fnId).textContent = input.files[0].name;
+  if(zoneId === 'uz-foto') {
+    document.getElementById('selfie-icon').style.display = 'none';
+    document.getElementById('selfie-label').style.display = 'none';
+    document.getElementById('selfie-check').style.display = 'block';
+  }
+}
+
+// Validasi Sederhana
+function checkStep1() {
+  const nama = document.getElementById('f-nama').value;
+  const nik = document.getElementById('f-nik').value;
+  const email = document.getElementById('f-email').value;
+  const pw = document.getElementById('f-pw').value;
+  const pw2 = document.getElementById('f-pw2').value;
+
+  if(!nama || !nik || !email || !pw) return toast('⚠️ Lengkapi data bertanda bintang (*)', 'error');
+  if(nik.length < 16) return toast('⚠️ NIK harus 16 digit', 'error');
+  if(pw.length < 6) return toast('⚠️ Sandi minimal 6 karakter (Aturan Firebase)', 'error');
+  if(pw !== pw2) {
+    document.getElementById('pw-match-err').classList.add('show');
+    return toast('⚠️ Kata sandi tidak cocok', 'error');
+  } else {
+    document.getElementById('pw-match-err').classList.remove('show');
+  }
+  goStep(2);
+}
+
+function checkStep2() {
+  const ktp = document.getElementById('uz-ktp').classList.contains('has-file');
+  const kk = document.getElementById('uz-kk').classList.contains('has-file');
+  if(!ktp || !kk) return toast('⚠️ Mohon unggah dokumen KTP dan KK', 'error');
+  
+  // Update UI Summary Konfirmasi
+  document.getElementById('k-nama').textContent = document.getElementById('f-nama').value;
+  document.getElementById('k-nik').textContent = document.getElementById('f-nik').value;
+  document.getElementById('k-email').textContent = document.getElementById('f-email').value;
+  document.getElementById('k-status').textContent = userStatus;
+  
+  goStep(3);
+}
+
+let tTimer;
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast-el');
+  el.textContent = msg;
+  if (type === 'error') el.classList.add('error'); else el.classList.remove('error');
+  el.classList.add('show');
+  clearTimeout(tTimer);
+  tTimer = setTimeout(() => el.classList.remove('show'), 4000);
+}
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+    authDomain: "bmtuwin.firebaseapp.com",
+    projectId: "bmtuwin",
+    storageBucket: "bmtuwin.firebasestorage.app",
+    messagingSenderId: "654364047353",
+    appId: "1:654364047353:web:385871ac2db1d52392ef28"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app); // Inisialisasi Firestore
+
+  window.prosesPendaftaran = function() {
+    const isAgree = document.getElementById('chk-akad').checked;
+    if(!isAgree) {
+      toast('⚠️ Mohon centang persetujuan akad terlebih dahulu.', 'error');
+      return;
+    }
+
+    const email = document.getElementById('f-email').value;
+    const password = document.getElementById('f-pw').value;
+    const btn = document.getElementById('btn-submit');
+    const btnBack = document.getElementById('btn-back-3');
+
+    // UI Loading State
+    const originalText = btn.innerHTML;
+    btn.innerHTML = 'Memproses... <span class="spinner"></span>';
+    btn.disabled = true;
+    btnBack.disabled = true;
+
+    // Firebase Create User
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+        
+        // Tulis data profil awal ke Firestore
+        await setDoc(doc(db, "users", user.uid), {
+            namaLengkap: document.getElementById('f-nama').value,
+            memberId: "BMT-" + Math.floor(1000 + Math.random() * 9000), // ID Acak
+            statusKeanggotaan: userStatus, // pastikan variabel userStatus tersedia di lingkup ini
+            totalSaldo: 0,
+            produkSimpanan: []
+        });
+
+        toast('✅ Akun & Profil berhasil dibuat!', 'success');
+        setTimeout(() => { goStep(4); }, 1000);
+      })
+      .catch((error) => {
+        // Gagal
+        const errorCode = error.code;
+        let errMsg = 'Terjadi kesalahan sistem.';
+        
+        if (errorCode === 'auth/email-already-in-use') {
+          errMsg = 'Email tersebut sudah terdaftar.';
+        } else if (errorCode === 'auth/invalid-email') {
+          errMsg = 'Format email tidak valid.';
+        } else if (errorCode === 'auth/weak-password') {
+          errMsg = 'Kata sandi terlalu lemah.';
+        }
+
+        toast('❌ Gagal: ' + errMsg, 'error');
+        
+        // Reset UI
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btnBack.disabled = false;
+      });
+  };
+</script>
+
+</body>
+</html>

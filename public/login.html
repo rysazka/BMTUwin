@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah IKALUIN — Masuk ke Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS & BASE
+════════════════════════════════════════ */
+:root {
+  --teal-950: #021b4d;
+  --teal-900: #023e8a;
+  --teal-700: #0077b6;
+  --teal-500: #0096c7;
+  --teal-300: #48cae4;
+  --teal-100: #dbf0f8;
+  --teal-50:  #f4f9fc;
+  --gold:     #00b4d8; 
+  --gold-real: #d4af37;
+  --gold-light:#90e0ef;
+  --gold-pale:#dcf3fa;
+  --cream:    #f8fafc;
+  --cream-d:  #e7f1f7;
+  --white:    #ffffff;
+  --ink:      #0f172a;
+  --ink-mid:  #334155;
+  --muted:    #64748b;
+  --faint:    #9ca3af;
+  --border:   rgba(0,119,182,0.15);
+  --danger:   #ef4444;
+  --success:  #10b981;
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-sm: 0 4px 20px rgba(2,62,138,0.05);
+  --shadow-glow: 0 10px 40px rgba(0, 180, 216, 0.25);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden; /* Mencegah scroll di halaman login desktop */
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ════════ ANIMATIONS ════════ */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 180, 216, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0); }
+}
+
+@keyframes floatSmooth {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ════════ SPLIT LAYOUT ════════ */
+.left-panel {
+  width: 500px;
+  background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f);
+  background-size: 300% 300%;
+  animation: gradientShift 15s ease infinite;
+  display: flex;
+  flex-direction: column;
+  padding: 56px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+/* Modern Orbs & Islamic Accent */
+.left-panel::before {
+  content: ''; position: absolute; bottom: -10%; right: -20%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,180,216,0.2) 0%, transparent 70%);
+  border-radius: 50%; filter: blur(40px); pointer-events: none;
+}
+.left-panel::after {
+  content: ''; position: absolute; top: -10%; left: -10%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none;
+}
+.arabic-bg {
+  font-family: 'Amiri', serif;
+  font-size: 100px; color: rgba(255,255,255,0.02);
+  position: absolute; right: -40px; top: 40%;
+  transform: translateY(-50%) rotate(-90deg);
+  white-space: nowrap; pointer-events: none;
+}
+
+.brand { margin-bottom: auto; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 4px; }
+.brand-arabic {
+  font-family: 'Amiri', serif; font-size: 22px; color: var(--gold-light);
+  letter-spacing: 1px;
+}
+.brand-name { font-size: 28px; font-weight: 800; line-height: 1.1; }
+.brand-sub { font-size: 12px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+.welcome-text { position: relative; z-index: 1; margin-bottom: auto; animation: floatSmooth 6s ease-in-out infinite; }
+.welcome-title { font-size: 38px; font-weight: 800; margin-bottom: 20px; line-height: 1.2; letter-spacing: -1px; }
+.welcome-title span { 
+  background: linear-gradient(90deg, var(--gold-light), #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.welcome-desc { font-size: 16px; color: rgba(255,255,255,0.8); line-height: 1.7; max-width: 380px; }
+
+.panel-footer { position: relative; z-index: 1; font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500; }
+
+/* ════════ RIGHT PANEL (FORM) ════════ */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: radial-gradient(circle at top right, var(--teal-50) 0%, var(--cream) 100%);
+}
+
+.nav-back {
+  position: absolute; top: 40px; right: 48px;
+  font-size: 14px; font-weight: 700; color: var(--muted);
+  display: flex; align-items: center; gap: 8px; transition: all 0.3s;
+  padding: 8px 16px; border-radius: 20px;
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(10px);
+}
+.nav-back:hover { color: var(--teal-700); background: #fff; box-shadow: var(--shadow-sm); transform: translateX(-5px); }
+
+/* ════════ FORM STYLING ════════ */
+.form-wrapper {
+  margin: auto;
+  width: 90%; /* Memberikan ruang napas (margin) di layar HP */
+  max-width: 440px;
+  /* Padding dinamis: 24px di HP, membesar hingga 40px di Desktop */
+  padding: clamp(24px, 5vw, 40px); 
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 50px rgba(2, 17, 54, 0.05);
+  box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+}
+
+.form-header { margin-bottom: clamp(24px, 4vw, 40px); text-align: center; }
+.form-title { 
+  font-size: clamp(24px, 4vw, 32px); /* Teks responsif */
+  font-weight: 800; 
+  color: var(--ink); 
+  margin-bottom: 8px; 
+  letter-spacing: -0.5px; 
+}
+.form-sub { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+/* Elements */
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: clamp(16px, 3vw, 24px); }
+.flabel { font-size: 14px; font-weight: 700; color: var(--ink-mid); }
+.finput {
+  width: 100%;
+  padding: clamp(12px, 2vw, 16px);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: inherit; font-size: 15px;
+  color: var(--ink); background: #fff;
+  outline: none; transition: all 0.3s;
+  box-sizing: border-box; /* Cegah input keluar dari wadah */
+}
+.finput:focus { 
+  border-color: var(--teal-500); 
+  box-shadow: 0 0 0 4px rgba(0, 150, 199, 0.1); 
+  transform: translateY(-2px); 
+}
+.finput::placeholder { color: var(--faint); font-size: 14px; }
+
+.input-wrap { position: relative; width: 100%; }
+.input-action {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 12px; font-weight: 800; color: var(--teal-500);
+  cursor: pointer; padding: 6px 12px; border-radius: 8px;
+  transition: all 0.2s;
+  background: var(--teal-50);
+}
+.input-action:hover { background: var(--teal-100); color: var(--teal-900); }
+
+/* Form Options (Ingat Saya & Lupa Sandi) */
+.form-options {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  flex-wrap: wrap; /* Izinkan elemen turun ke bawah di layar sangat kecil */
+  gap: 12px;
+  margin-bottom: clamp(24px, 4vw, 32px); 
+  font-size: 14px;
+}
+.checkbox-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--ink-mid); font-weight: 600; }
+.checkbox-wrap input { width: 18px; height: 18px; accent-color: var(--teal-700); cursor: pointer; flex-shrink: 0; }
+.forgot-link { color: var(--teal-700); font-weight: 700; transition: color 0.3s; white-space: nowrap; }
+.forgot-link:hover { color: var(--gold); }
+
+.btn-primary {
+  width: 100%; padding: 18px;
+  background: var(--teal-900); color: #fff;
+  border: none; border-radius: var(--radius-md);
+  font-family: inherit; font-size: 16px; font-weight: 800;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+  position: relative; overflow: hidden;
+}
+.btn-primary::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+.btn-primary:hover::before { left: 100%; }
+.btn-primary:hover { background: var(--teal-700); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(2, 62, 138, 0.3); }
+
+.register-prompt {
+  text-align: center; margin-top: 32px;
+  font-size: 14px; color: var(--muted); font-weight: 500;
+}
+.register-link { color: var(--gold); font-weight: 800; cursor: pointer; transition: all 0.3s; margin-left: 4px; }
+.register-link:hover { color: var(--teal-900); text-decoration: underline; }
+
+/* Toast Notification */
+.toast {
+  position: fixed; top: 40px; right: 50%; transform: translateX(50%) translateY(-20px);
+  background: var(--teal-900); color: #fff;
+  padding: 16px 32px; border-radius: var(--radius-lg);
+  font-size: 15px; font-weight: 700;
+  box-shadow: 0 20px 40px rgba(2,62,138,0.25);
+  z-index: 1000; opacity: 0; visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; gap: 12px;
+}
+.toast.error { background: var(--danger); box-shadow: 0 20px 40px rgba(239, 68, 68, 0.25); }
+.toast.show { transform: translateX(50%) translateY(0); opacity: 1; visibility: visible; }
+
+
+/* ════════ RESPONSIVE ════════ */
+@media (max-width: 992px) {
+  body { overflow: auto; }
+  .left-panel { display: none; }
+  
+  .right-panel { 
+    /* Pastikan padding atas cukup besar (misal 100px) di versi mobile */
+    padding: 100px 24px 40px; 
+    justify-content: center; 
+    align-items: center; 
+  }
+  
+  .nav-back { 
+    top: 24px; 
+    left: 50%; 
+    right: auto;
+    transform: translateX(-50%);
+    width: max-content;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .form-wrapper {
+    /* Tetap pertahankan efek kartu agar terlihat premium di mobile */
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(2, 62, 138, 0.1);
+    box-shadow: 0 10px 40px rgba(2, 17, 54, 0.08);
+  }
+}
+
+/* Penyesuaian ekstra untuk layar HP yang sangat sempit (seperti iPhone SE) */
+@media (max-width: 480px) {
+  .form-options {
+    flex-direction: column; /* Ubah orientasi menyamping menjadi ke bawah */
+    align-items: flex-start;
+  }
+  .form-wrapper { width: 92%; }
+}
+</style>
+</head>
+<body>
+
+  <aside class="left-panel">
+    <div class="arabic-bg">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</div>
+    
+    <div class="brand">
+      <div class="brand-arabic">بيت المال والتمويل</div>
+      <div class="brand-name">BMT Syahidah</div>
+      <div class="brand-sub">Koperasi Syariah IKALUIN</div>
+    </div>
+
+    <div class="welcome-text">
+      <h1 class="welcome-title">Selamat Datang <span>Kembali.</span></h1>
+      <p class="welcome-desc">Masuk ke portal digital untuk memantau portofolio simpanan, mengelola pembiayaan, dan menyalurkan ZIS Anda secara cerdas dan transparan.</p>
+    </div>
+
+    <div class="panel-footer">
+      &copy; 2026 BMT Syahidah IKALUIN. Hak Cipta Dilindungi.
+    </div>
+  </aside>
+
+  <main class="right-panel">
+    <a href="index.html" class="nav-back">← Kembali ke Beranda</a>
+
+    <div class="form-wrapper">
+      <div class="form-header">
+        <h2 class="form-title">Masuk Akun</h2>
+        <p class="form-sub">Masukkan kredensial akun BMT Anda</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label class="flabel">Email</label>
+          <input type="email" class="finput" id="emailInput" placeholder="Contoh: nama@gmail.com" required>
+        </div>
+
+        <div class="field">
+          <label class="flabel">Kata Sandi</label>
+          <div class="input-wrap">
+            <input type="password" class="finput" id="pwInput" placeholder="Masukkan kata sandi Anda" required>
+            <span class="input-action" onclick="togglePw()">Lihat</span>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="rememberMe"> Ingat Saya
+          </label>
+          <a href="#" class="forgot-link" onclick="toast('Tautan reset kata sandi telah dikirim ke email Anda.', 'success')">Lupa Kata Sandi?</a>
+        </div>
+
+        <button type="submit" class="btn-primary" id="loginBtn">Masuk ke Portal</button>
+      </form>
+
+      <div class="register-prompt">
+        Belum menjadi anggota? 
+        <a href="registrasi.html" class="register-link">Daftar Sekarang</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast-el">✅ Berhasil masuk! Mengalihkan...</div>
+
+  <script>
+    // Toggle Password Visibility
+    function togglePw() {
+      const pwInput = document.getElementById('pwInput');
+      const actionBtn = document.querySelector('.input-action');
+      
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        actionBtn.textContent = 'Tutup';
+      } else {
+        pwInput.type = 'password';
+        actionBtn.textContent = 'Lihat';
+      }
+    }
+
+    // Toast Notification System
+    let tTimer;
+    function toast(msg, type = 'success') {
+      const el = document.getElementById('toast-el');
+      el.textContent = msg;
+      
+      if (type === 'error') {
+        el.classList.add('error');
+      } else {
+        el.classList.remove('error');
+      }
+
+      el.classList.add('show');
+      
+      clearTimeout(tTimer);
+      tTimer = setTimeout(() => {
+        el.classList.remove('show');
+      }, 4000); // Tampil sedikit lebih lama
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+      authDomain: "bmtuwin.firebaseapp.com",
+      projectId: "bmtuwin",
+      storageBucket: "bmtuwin.firebasestorage.app",
+      messagingSenderId: "654364047353",
+      appId: "1:654364047353:web:385871ac2db1d52392ef28"
+    };
+
+    // Initialize Firebase & Auth
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Handle Form Submission
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // Mencegah form me-refresh halaman
+      
+      const email = document.getElementById('emailInput').value;
+      const pw = document.getElementById('pwInput').value;
+      
+      // Update UI to loading state
+      const originalBtnText = loginBtn.innerHTML;
+      loginBtn.innerHTML = 'Memverifikasi... <span style="animation: pulseGlow 1.5s infinite; width:10px; height:10px; background:#fff; border-radius:50%; display:inline-block; margin-left:8px;"></span>';
+      loginBtn.style.opacity = '0.8';
+      loginBtn.style.cursor = 'wait';
+      loginBtn.disabled = true;
+
+      // Firebase Authentication Process
+      signInWithEmailAndPassword(auth, email, pw)
+        .then((userCredential) => {
+          // Sukses login
+          const user = userCredential.user;
+          toast('✅ Autentikasi berhasil! Mengalihkan ke portal...', 'success');
+          
+          // Redirect ke halaman portal setelah delay singkat
+          setTimeout(() => {
+            window.location.href = 'portal.html';
+          }, 1500);
+        })
+        .catch((error) => {
+          // Gagal login
+          const errorCode = error.code;
+          let errorMessage = 'Gagal masuk. Silakan coba lagi.';
+          
+          // Mapping error code Firebase ke bahasa Indonesia yang ramah
+          if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password' || errorCode === 'auth/user-not-found') {
+            errorMessage = 'Email atau kata sandi yang Anda masukkan salah.';
+          } else if (errorCode === 'auth/too-many-requests') {
+            errorMessage = 'Terlalu banyak percobaan gagal. Silakan coba beberapa saat lagi.';
+          }
+
+          toast('❌ ' + errorMessage, 'error');
+          
+          // Reset button UI
+          loginBtn.innerHTML = originalBtnText;
+          loginBtn.style.opacity = '1';
+          loginBtn.style.cursor = 'pointer';
+          loginBtn.disabled = false;
+        });
+    });
+  </script>
+</body>
+</html>

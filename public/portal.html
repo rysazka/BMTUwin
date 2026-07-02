@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah — Beranda</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Menggunakan pustaka ikon profesional untuk menggantikan emoji -->
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS & BASE
+════════════════════════════════════════ */
+:root {
+  --teal-950: #021b4d;
+  --teal-900: #023e8a;
+  --teal-700: #0077b6;
+  --teal-500: #0096c7;
+  --teal-300: #48cae4;
+  --teal-100: #dbf0f8;
+  --teal-50:  #f4f9fc;
+  --gold:     #00b4d8; 
+  --gold-real: #d4af37;
+  --gold-light:#90e0ef;
+  --gold-pale:#dcf3fa;
+  --saffron: #d4860a; 
+  --saffron-light: #f5a623;
+  --emerald: #10b981;
+  --cream:    #f8fafc;
+  --white:    #ffffff;
+  --ink:      #0f172a;
+  --ink-mid:  #334155;
+  --ink-soft: #64748b;
+  --border:   rgba(2, 62, 138, 0.1);
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-sm: 0 10px 30px rgba(2,17,54,0.03);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: 'Plus Jakarta Sans', sans-serif; 
+  background: radial-gradient(circle at top right, var(--teal-50) 0%, var(--cream) 100%);
+  color: var(--ink); display: flex; height: 100vh; overflow: hidden; 
+}
+a { text-decoration: none; color: inherit; }
+
+/* Scrollbar Custom */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(2, 62, 138, 0.15); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal-300); }
+
+/* ════════ LAYOUT & SIDEBAR ════════ */
+.sidebar { 
+  width: 280px; 
+  background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f);
+  color: #fff; display: flex; flex-direction: column; position: relative; z-index: 20;
+}
+.sidebar-brand { 
+  padding: 32px 24px 24px; font-size: 24px; font-weight: 800; color: #fff; 
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-brand span {
+  background: linear-gradient(90deg, var(--gold-light), #fff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.sidebar-nav { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.nav-item { 
+  padding: 14px 18px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; 
+  color: rgba(255,255,255,0.6); transition: all 0.3s; display: flex; align-items: center; gap: 12px;
+}
+.nav-item i { font-size: 20px; }
+.nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+.nav-item.active { 
+  background: rgba(255,255,255,0.1); color: #fff; box-shadow: inset 4px 0 0 var(--gold-light); 
+}
+
+/* ════════ MAIN CONTENT & HEADER ════════ */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.header { 
+  display: flex; justify-content: space-between; align-items: center; 
+  padding: 20px 40px; background: rgba(255, 255, 255, 0.8); 
+  backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.5); 
+  position: sticky; top: 0; z-index: 10;
+}
+.header-greeting { display: flex; flex-direction: column; gap: 4px; }
+.header-name { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+.member-badge { font-size: 11px; padding: 4px 10px; background: var(--teal-100); color: var(--teal-900); border-radius: 20px; font-weight: 800; text-transform: uppercase; }
+.header-no { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+.header-right { display: flex; gap: 20px; align-items: center; }
+.hdr-btn { cursor: pointer; position: relative; font-size: 20px; background: var(--white); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); color: var(--teal-900); transition: 0.2s;}
+.hdr-btn:hover { border-color: var(--teal-300); background: var(--teal-50); }
+.hdr-btn.logout { font-size: 14px; width: auto; padding: 0 20px; border-radius: var(--radius-md); font-weight: 700; color: #ef4444; border-color: transparent; }
+
+/* ════════ CARDS & UI ════════ */
+.page { padding: 40px; animation: popIn 0.5s ease; }
+@keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+.card { 
+  background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(16px);
+  border-radius: var(--radius-xl); border: 1px solid rgba(255, 255, 255, 0.8); 
+  overflow: hidden; margin-bottom: 24px; box-shadow: var(--shadow-sm);
+}
+.card-head { padding: 24px 28px; border-bottom: 1px solid rgba(2,62,138,0.08); display: flex; justify-content: space-between; align-items: center; }
+.card-title { font-size: 18px; font-weight: 800; color: var(--ink); }
+.card-sub { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
+.card-body { padding: 28px; }
+.card-link { font-size: 14px; color: var(--teal-700); font-weight: 700; cursor: pointer; }
+
+/* Saldo Card */
+.saldo-card { 
+  background: linear-gradient(135deg, var(--teal-900), #001f3f); 
+  color: #fff; border-radius: var(--radius-xl); padding: 40px; margin-bottom: 32px; 
+  display: flex; flex-direction: column; gap: 36px; position: relative; overflow: hidden;
+}
+.saldo-card::after { content: 'بَارَكَ اللهُ'; font-family: 'Amiri', serif; font-size: 80px; color: rgba(255,255,255,0.04); position: absolute; right: 20px; top: 50%; transform: translateY(-50%); }
+.saldo-top { display: flex; justify-content: space-between; align-items: flex-start; z-index: 2; position: relative; }
+.saldo-label-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 14px; font-weight: 700; color: var(--gold-pale); text-transform: uppercase; }
+.saldo-eye { cursor: pointer; background: rgba(255,255,255,0.1); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 16px; }
+.saldo-amount { font-size: 52px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.saldo-amount .currency { font-size: 24px; font-weight: 700; transform: translateY(-6px); opacity: 0.8;}
+.saldo-chip { font-size: 13px; background: rgba(16, 185, 129, 0.15); color: #d1fae5; padding: 8px 16px; border-radius: 30px; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3); }
+.saldo-chip-dot { width: 8px; height: 8px; background: var(--emerald); border-radius: 50%; }
+
+.saldo-product-pills { display: flex; gap: 16px; z-index: 2; position: relative; }
+.saldo-pill { background: rgba(255,255,255,0.08); padding: 20px 24px; border-radius: var(--radius-lg); flex: 1; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 6px; }
+.p-name { font-size: 13px; color: var(--gold-pale); font-weight: 700; text-transform: uppercase; }
+.p-val { font-size: 22px; font-weight: 800; font-family: 'DM Mono', monospace; }
+
+/* Quick Actions */
+.quick-actions { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 32px; }
+.qa-btn { background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.9); padding: 20px 16px; border-radius: var(--radius-xl); text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; color: var(--ink);}
+.qa-btn:hover { border-color: var(--teal-300); background: #fff; transform: translateY(-5px); }
+.qa-icon { font-size: 28px; width: 56px; height: 56px; background: linear-gradient(135deg, var(--teal-50), var(--teal-100)); color: var(--teal-900); display: flex; align-items: center; justify-content: center; border-radius: 16px; transition: 0.3s;}
+.qa-label { font-size: 14px; font-weight: 700; }
+
+/* Mutasi List */
+.beranda-lower { display: grid; grid-template-columns: 2fr 1.2fr; gap: 24px; }
+.mutasi-list { display: flex; flex-direction: column; gap: 0; }
+.mutasi-item { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(2,62,138,0.08); }
+.mutasi-item:last-child { border-bottom: none; }
+.mutasi-ico { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--teal-50); color: var(--teal-700); }
+.mutasi-info { flex: 1; }
+.mutasi-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.mutasi-date { font-size: 13px; color: var(--ink-soft); }
+.mutasi-amount { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 800;}
+.mutasi-amount.in { color: var(--emerald); }
+
+/* Empty State */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--ink-soft); }
+.empty-state i { font-size: 48px; margin-bottom: 16px; color: var(--border); }
+.empty-state h4 { font-size: 18px; color: var(--ink); margin-bottom: 8px; }
+
+/* Loader Overlay */
+#loader-overlay { position: fixed; inset: 0; background: var(--cream); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.spinner { width: 40px; height: 40px; border: 4px solid var(--teal-100); border-top: 4px solid var(--teal-900); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+  <!-- Loading State awal saat mengecek auth -->
+  <div id="loader-overlay">
+    <div class="spinner"></div>
+    <div style="font-weight: 700; color: var(--teal-900);">Memuat Portal...</div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">BMT Syahidah<br><span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">Portal Anggota</span></div>
+    <nav class="sidebar-nav">
+       <a href="portal.html" class="nav-item active"><i class="ph ph-house"></i> Beranda</a>
+       <a href="dashboard.html" class="nav-item"><i class="ph ph-chart-line-up"></i> Dashboard Wakaf</a>
+       <a href="simpanan.html" class="nav-item"><i class="ph ph-wallet"></i> Simpanan</a>
+       <a href="pembiayaan.html" class="nav-item"><i class="ph ph-handshake"></i> Pembiayaan</a>
+       <a href="ziswakaf.html" class="nav-item"><i class="ph ph-leaf"></i> ZIS & Wakaf</a>
+       <a href="riwayat.html" class="nav-item"><i class="ph ph-receipt"></i> Riwayat Transaksi</a>
+       <a href="profil.html" class="nav-item"><i class="ph ph-user"></i> Profil Akun</a>
+    </nav>
+  </aside>
+
+  <div class="main-content">
+    <header class="header">
+      <div class="header-greeting">
+        <div class="header-name">
+          <span id="header-name">Memuat Nama...</span>
+          <span class="member-badge" id="header-status">MEMBER</span>
+        </div>
+        <div class="header-no" id="header-id">ID: Memuat data...</div>
+      </div>
+      <div class="header-right">
+        <div class="hdr-btn" title="Mode Tema"><i class="ph ph-moon"></i></div>
+        <div class="hdr-btn"><i class="ph ph-bell"></i></div>
+        <button class="hdr-btn logout" id="btnLogout">Keluar</button>
+      </div>
+    </header>
+
+    <div class="page active" id="page-beranda">
+      
+      <div class="saldo-card">
+        <div class="saldo-top">
+          <div>
+            <div class="saldo-label-row">
+              Total Saldo Simpanan
+              <div class="saldo-eye" onclick="toggleHide()" id="eye-btn" title="Sembunyikan saldo"><i class="ph ph-eye"></i></div>
+            </div>
+            <div class="saldo-amount" id="saldo-display">
+              <span class="currency">Rp</span><span id="saldo-val">0</span>
+            </div>
+          </div>
+          <div class="saldo-chip">
+            <span class="saldo-chip-dot"></span> Rekening Aktif
+          </div>
+        </div>
+        
+        <div class="saldo-product-pills" id="product-pills">
+          <!-- Diisi secara dinamis oleh Firestore -->
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <a href="simpanan.html" class="qa-btn">
+          <div class="qa-icon"><i class="ph ph-trend-up"></i></div>
+          <span class="qa-label">Setor Simpanan</span>
+        </a>
+        <a href="simpanan.html" class="qa-btn">
+          <div class="qa-icon"><i class="ph ph-trend-down"></i></div>
+          <span class="qa-label">Tarik Dana</span>
+        </a>
+        <a href="pembiayaan.html" class="qa-btn">
+          <div class="qa-icon"><i class="ph ph-handshake"></i></div>
+          <span class="qa-label">Ajukan Pembiayaan</span>
+        </a>
+        <a href="ziswakaf.html" class="qa-btn">
+          <div class="qa-icon"><i class="ph ph-plant"></i></div>
+          <span class="qa-label">Wakaf Produktif</span>
+        </a>
+        <a href="ziswakaf.html" class="qa-btn">
+          <div class="qa-icon"><i class="ph ph-hands-praying"></i></div>
+          <span class="qa-label">Bayar Zakat</span>
+        </a>
+      </div>
+
+      <div class="beranda-lower">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Riwayat Transaksi Terkini</div>
+              <div class="card-sub">Pembaruan mutasi real-time</div>
+            </div>
+            <a href="riwayat.html" class="card-link">Lihat semua →</a>
+          </div>
+          <div class="card-body">
+            <div class="mutasi-list" id="mutasi-container">
+                <!-- Diisi secara dinamis oleh Firestore -->
+            </div>
+          </div>
+        </div>
+        
+        <!-- Info Stack tambahan (opsional dinamis) -->
+        <div class="info-stack" id="notif-angsuran">
+          <!-- Kosong secara default -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+      authDomain: "bmtuwin.firebaseapp.com",
+      projectId: "bmtuwin",
+      storageBucket: "bmtuwin.firebasestorage.app",
+      messagingSenderId: "654364047353",
+      appId: "1:654364047353:web:385871ac2db1d52392ef28"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Cek Status Login
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Hapus layar loading
+        document.getElementById('loader-overlay').style.display = 'none';
+        
+        // Ambil Data Profil Pengguna
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          
+          // Render Header
+          document.getElementById('header-name').textContent = data.namaLengkap || 'Anggota BMT';
+          document.getElementById('header-status').textContent = data.statusKeanggotaan || 'Alumni';
+          document.getElementById('header-id').textContent = `ID: ${data.memberId || user.uid.substring(0, 8).toUpperCase()}`;
+
+          // Render Saldo
+          let rawSaldo = data.totalSaldo || 0;
+          document.getElementById('saldo-val').textContent = rawSaldo.toLocaleString('id-ID');
+          window.currentSaldo = rawSaldo; // Disimpan global untuk fitur toggle hide
+
+          // Render Produk Simpanan (Jika saldo > 0)
+          const pillsContainer = document.getElementById('product-pills');
+          if (rawSaldo > 0 && data.produkSimpanan) {
+             let htmlContent = '';
+             data.produkSimpanan.forEach(prod => {
+                 htmlContent += `
+                 <div class="saldo-pill">
+                    <div class="p-name">${prod.namaProduk}</div>
+                    <div class="p-val">Rp ${prod.saldo.toLocaleString('id-ID')}</div>
+                 </div>`;
+             });
+             pillsContainer.innerHTML = htmlContent;
+          } else {
+             pillsContainer.innerHTML = `
+             <div class="saldo-pill" style="border-color: rgba(255,255,255,0.4);">
+                <div class="p-name">Belum Ada Simpanan</div>
+                <div class="p-val" style="font-size:16px; margin-top:8px;">Lakukan setor perdana untuk mengaktifkan rekening.</div>
+             </div>`;
+          }
+
+        } else {
+          console.log("Data pengguna tidak ditemukan di Firestore.");
+        }
+
+        // Ambil Data Mutasi (Transaksi)
+        const mutasiRef = collection(db, `users/${user.uid}/mutasi`);
+        const qMutasi = query(mutasiRef, orderBy("tanggal", "desc"), limit(4));
+        const mutasiSnap = await getDocs(qMutasi);
+        const mutasiContainer = document.getElementById('mutasi-container');
+
+        if (!mutasiSnap.empty) {
+          let mutasiHTML = '';
+          mutasiSnap.forEach((doc) => {
+            const tr = doc.data();
+            const isIn = tr.tipe === 'masuk';
+            const icon = isIn ? '<i class="ph ph-trend-up"></i>' : '<i class="ph ph-trend-down"></i>';
+            const sign = isIn ? '+' : '-';
+            const colorClass = isIn ? 'in' : 'out';
+            
+            // Format Tanggal
+            let dateStr = "Waktu Tidak Tersedia";
+            if (tr.tanggal) {
+              const d = tr.tanggal.toDate();
+              dateStr = `${d.getDate()} ${d.toLocaleString('id-ID', { month: 'short' })} ${d.getFullYear()} · ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')} WIB`;
+            }
+
+            mutasiHTML += `
+            <div class="mutasi-item">
+              <div class="mutasi-ico">${icon}</div>
+              <div class="mutasi-info">
+                <div class="mutasi-title">${tr.judul}</div>
+                <div class="mutasi-date">${dateStr}</div>
+              </div>
+              <div class="mutasi-amount ${colorClass}">${sign}Rp ${tr.nominal.toLocaleString('id-ID')}</div>
+            </div>`;
+          });
+          mutasiContainer.innerHTML = mutasiHTML;
+        } else {
+          // Empty state mutasi
+          mutasiContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="ph ph-receipt"></i>
+              <h4>Belum Ada Transaksi</h4>
+              <p>Riwayat simpanan, penarikan, dan pembayaran Anda akan muncul di sini.</p>
+            </div>
+          `;
+        }
+
+      } else {
+        // Jika belum login, redirect ke login.html
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Fitur Logout
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      signOut(auth).then(() => {
+        window.location.href = 'login.html';
+      });
+    });
+  </script>
+
+  <script>
+    // Fitur Sembunyikan Saldo
+    let saldoHidden = false;
+    window.toggleHide = function() {
+      const valEl = document.getElementById('saldo-val');
+      const btnEl = document.getElementById('eye-btn');
+      saldoHidden = !saldoHidden;
+      
+      if(saldoHidden) {
+        valEl.textContent = '***.***';
+        btnEl.innerHTML = '<i class="ph ph-eye-slash"></i>';
+      } else {
+        valEl.textContent = (window.currentSaldo || 0).toLocaleString('id-ID');
+        btnEl.innerHTML = '<i class="ph ph-eye"></i>';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah IKALUIN — Koperasi Syariah Modern</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS & BASE
+════════════════════════════════════════ */
+:root {
+  --teal-950: #021b4d;
+  --teal-900: #023e8a;
+  --teal-700: #0077b6;
+  --teal-500: #0096c7;
+  --teal-300: #48cae4;
+  --teal-100: #dbf0f8;
+  --teal-50:  #f4f9fc;
+  --gold:     #00b4d8; /* Tetap disesuaikan dengan token asli */
+  --gold-real: #d4af37;
+  --gold-light:#90e0ef;
+  --gold-pale:#dcf3fa;
+  --cream:    #f8fafc;
+  --cream-d:  #e7f1f7;
+  --white:    #ffffff;
+  --ink:      #0f172a;
+  --ink-mid:  #334155;
+  --muted:    #64748b;
+  --border:   rgba(0,119,182,0.15);
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-sm: 0 4px 20px rgba(2,62,138,0.05);
+  --shadow-glow: 0 10px 40px rgba(0, 180, 216, 0.25);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.6;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ════════ ANIMATIONS ════════ */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes floatSmooth {
+  0%, 100% { transform: translateY(0) rotateX(5deg) rotateY(-10deg); }
+  50% { transform: translateY(-15px) rotateX(8deg) rotateY(-5deg); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 180, 216, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ════════ NAVIGATION ════════ */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 1000;
+  padding: 16px 0;
+  transition: all 0.4s ease;
+}
+.navbar.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 30px rgba(2, 17, 54, 0.08);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: transparent;
+  transition: transform 0.3s;
+}
+.logo-group:hover .logo-icon {
+  transform: scale(1.05) rotate(5deg);
+}
+
+.logo-text { display: flex; flex-direction: column; }
+.logo-title { font-size: 17px; font-weight: 800; color: var(--teal-900); line-height: 1.1; }
+.logo-sub { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+
+.nav-links { display: flex; gap: 36px; align-items: center; }
+.nav-link {
+  font-size: 14px; font-weight: 600; color: var(--ink-mid);
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-link::after {
+  content: '';
+  position: absolute; width: 0; height: 2px;
+  bottom: -4px; left: 0;
+  background: var(--teal-500);
+  transition: width 0.3s ease;
+}
+.nav-link:hover { color: var(--teal-700); }
+.nav-link:hover::after { width: 100%; }
+
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-family: inherit; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+.btn:hover::before { left: 100%; }
+
+.btn-outline {
+  background: rgba(255, 255, 255, 0.5); color: var(--teal-900);
+  border: 1.5px solid var(--teal-300);
+  backdrop-filter: blur(5px);
+}
+.btn-outline:hover { 
+  background: var(--teal-50); 
+  border-color: var(--teal-500);
+  box-shadow: 0 4px 15px rgba(0, 119, 182, 0.1);
+}
+.btn-primary { background: var(--teal-900); color: #fff; }
+.btn-primary:hover { 
+  background: var(--teal-700); 
+  transform: translateY(-2px); 
+  box-shadow: 0 10px 20px rgba(2, 62, 138, 0.3);
+}
+.btn-gold { background: var(--gold); color: #fff; }
+.btn-gold:hover { 
+  background: #0099b8; 
+  transform: translateY(-3px); 
+  box-shadow: var(--shadow-glow); 
+}
+
+/* ════════ HERO SECTION ════════ */
+.hero {
+  padding: 180px 0 120px;
+  background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f);
+  background-size: 300% 300%;
+  animation: gradientShift 15s ease infinite;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+}
+
+/* Modern Orbs & Islamic Accent */
+.hero::before {
+  content: ''; position: absolute; right: 10%; top: -10%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,180,216,0.3) 0%, transparent 70%);
+  border-radius: 50%; filter: blur(40px); pointer-events: none;
+}
+.hero::after {
+  content: 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم';
+  font-family: 'Amiri', serif;
+  font-size: 140px; color: rgba(255,255,255,0.02);
+  position: absolute; left: -20px; bottom: 0px;
+  white-space: nowrap; pointer-events: none;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative; z-index: 10;
+}
+
+.hero-tag {
+  display: inline-block;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--gold-light);
+  font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  border-radius: 30px; margin-bottom: 24px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.hero-title {
+  font-size: 52px; font-weight: 800; line-height: 1.15;
+  margin-bottom: 24px; letter-spacing: -1px;
+}
+.hero-title span { 
+  background: linear-gradient(90deg, var(--gold-light), #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-desc {
+  font-size: 17px; color: rgba(255,255,255,0.8);
+  line-height: 1.7; margin-bottom: 40px;
+  max-width: 480px;
+}
+
+/* Floating Card Graphic (Futuristic Glassmorphism) */
+.hero-graphic {
+  position: relative;
+  perspective: 1200px;
+  display: flex;
+  justify-content: center;
+}
+.floating-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.05);
+  transform: rotateY(-10deg) rotateX(5deg);
+  animation: floatSmooth 8s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+.floating-card::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+  transform: skewX(-20deg);
+  animation: shine 6s infinite;
+}
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 200%; }
+  100% { left: 200%; }
+}
+.floating-card::after {
+  content: 'بَارَكَ اللهُ';
+  font-family: 'Amiri', serif; font-size: 72px; color: rgba(255,255,255,0.04);
+  position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+}
+
+.fc-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.fc-amount { font-size: 42px; font-weight: 800; margin-bottom: 32px; font-family: 'DM Mono', monospace; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.fc-amount span { font-size: 24px; opacity: 0.7; font-weight: 500; }
+.fc-pill-group { display: flex; gap: 12px; }
+.fc-pill {
+  background: rgba(255,255,255,0.08); padding: 12px 20px; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex: 1;
+}
+.fc-pill-title { font-size: 11px; opacity: 0.7; font-weight: 600; }
+.fc-pill-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+
+/* ════════ FEATURES SECTION ════════ */
+.features { padding: 120px 0; background: var(--cream); position: relative; }
+.section-header { text-align: center; margin-bottom: 70px; max-width: 650px; margin-left: auto; margin-right: auto; }
+.section-tag { 
+  display: inline-block; font-size: 12px; font-weight: 800; color: var(--teal-700); 
+  text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; 
+  background: var(--teal-100); padding: 6px 16px; border-radius: 20px;
+}
+.section-title { font-size: 36px; font-weight: 800; color: var(--ink); margin-bottom: 20px; line-height: 1.2; }
+.section-desc { font-size: 16px; color: var(--muted); }
+
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.feat-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-xl);
+  padding: 40px 32px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+.feat-card:hover {
+  transform: translateY(-10px);
+  background: #fff;
+  border-color: transparent;
+  box-shadow: 0 20px 40px rgba(2, 62, 138, 0.08);
+}
+.feat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+  background: linear-gradient(90deg, var(--teal-900), var(--teal-300), var(--gold));
+  opacity: 0; transition: opacity 0.4s;
+}
+.feat-card:hover::before { opacity: 1; }
+
+.feat-icon {
+  width: 72px; height: 72px; border-radius: 20px;
+  background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; margin-bottom: 28px;
+  transition: transform 0.4s ease;
+}
+.feat-card:hover .feat-icon { transform: scale(1.1) rotate(-5deg); }
+.feat-title { font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+.feat-desc { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 28px; }
+.feat-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.feat-list li { font-size: 14px; color: var(--ink-mid); display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.feat-list li::before { 
+  content: '✓'; color: #fff; font-size: 10px; background: var(--teal-500); 
+  width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; 
+  border-radius: 50%; font-weight: bold; 
+}
+
+/* ════════ VALUE PROPOSITION ════════ */
+.value-prop { padding: 120px 0; background: #fff; position: relative; }
+.vp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.vp-content h2 { font-size: 40px; font-weight: 800; margin-bottom: 24px; line-height: 1.2; color: var(--ink); }
+.vp-content p { font-size: 16px; color: var(--muted); margin-bottom: 40px; line-height: 1.8; }
+.vp-item { display: flex; gap: 20px; margin-bottom: 32px; padding: 20px; border-radius: var(--radius-lg); transition: background 0.3s; }
+.vp-item:hover { background: var(--cream); }
+.vp-item-icon {
+  width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+  background: var(--gold-pale); color: var(--teal-900);
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+  box-shadow: 0 8px 20px rgba(0, 180, 216, 0.15);
+}
+.vp-item-text h4 { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.vp-item-text p { font-size: 14px; color: var(--muted); line-height: 1.6; margin: 0; }
+
+.vp-image-wrap { position: relative; }
+.vp-image-box {
+  background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+  border-radius: var(--radius-xl);
+  height: 480px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.02);
+}
+.vp-image-box::before {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(0,180,216,0.1) 0%, transparent 60%);
+  animation: rotateGlow 20s linear infinite;
+}
+@keyframes rotateGlow { 100% { transform: rotate(360deg); } }
+
+.vp-app-mock {
+  width: 260px; height: 420px; background: #fff; border-radius: 24px 24px 0 0;
+  box-shadow: 0 30px 60px rgba(2, 62, 138, 0.15); border: 10px solid #fff; border-bottom: none;
+  transform: translateY(30px); display: flex; flex-direction: column; padding: 20px;
+  position: relative;
+}
+/* Scanning line effect */
+.vp-app-mock::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--teal-500); box-shadow: 0 0 15px var(--teal-500);
+  animation: scan 3s ease-in-out infinite;
+  border-radius: 3px;
+}
+@keyframes scan {
+  0% { top: 10%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 90%; opacity: 0; }
+}
+
+.mock-head { height: 48px; background: linear-gradient(135deg, var(--teal-900), var(--teal-700)); border-radius: 12px; margin-bottom: 16px; }
+.mock-body { flex: 1; background: var(--cream); border-radius: 12px; border: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.mock-line { height: 12px; background: #e2e8f0; border-radius: 6px; }
+
+/* ════════ CTA BANNER ════════ */
+.cta-banner { padding: 100px 0; background: var(--cream); }
+.cta-box {
+  background: linear-gradient(135deg, var(--teal-900), #001f3f);
+  border-radius: var(--radius-xl);
+  padding: 80px 40px;
+  text-align: center; color: #fff;
+  position: relative; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(2, 62, 138, 0.2);
+}
+.cta-box::before {
+  content: ''; position: absolute; top: -100px; left: -100px; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(0,180,216,0.3) 0%, transparent 70%); border-radius: 50%;
+}
+.cta-box::after {
+  content: ''; position: absolute; bottom: -100px; right: -100px; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%); border-radius: 50%;
+}
+.cta-box h2 { font-size: 38px; font-weight: 800; margin-bottom: 20px; position: relative; z-index: 2; }
+.cta-box p { font-size: 17px; color: rgba(255,255,255,0.8); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 2; line-height: 1.7; }
+.btn-cta {
+  background: var(--gold); color: #fff; font-size: 16px; padding: 16px 40px;
+  border-radius: 30px; font-weight: 800; transition: all 0.3s;
+  box-shadow: 0 10px 30px rgba(0, 180, 216, 0.3);
+  position: relative; z-index: 2; border: none; cursor: pointer;
+}
+.btn-cta:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 40px rgba(0, 180, 216, 0.5); background: #0099b8; }
+
+/* ════════ FOOTER ════════ */
+.footer { background: #01122a; color: rgba(255,255,255,0.6); padding: 100px 0 40px; position: relative; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 50px; margin-bottom: 80px; }
+.footer-brand { margin-bottom: 24px; color: #fff; font-size: 22px; font-weight: 800; }
+.footer-title { color: #fff; font-size: 15px; font-weight: 800; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1.5px; }
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.footer-links a { transition: all 0.3s ease; font-size: 14px; position: relative; display: inline-block; }
+.footer-links a:hover { color: var(--gold-light); transform: translateX(5px); }
+.footer-bottom { 
+  border-top: 1px solid rgba(255,255,255,0.05); 
+  padding-top: 30px; 
+  display: flex; 
+  justify-content: center; /* Dipusatkan ke tengah */
+  text-align: center;
+  font-size: 14px; 
+}
+
+/* Responsive basics */
+@media (max-width: 992px) {
+  .hero-content, .vp-grid { grid-template-columns: 1fr; text-align: center; }
+  .hero-desc { margin-left: auto; margin-right: auto; }
+  .floating-card { max-width: 400px; margin: 40px auto 0; }
+  .hero::after { display: none; }
+  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .vp-item { text-align: left; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 40px; }
+  .hero { padding: 140px 0 80px; }
+}
+</style>
+</head>
+<body>
+
+  <!-- ════ NAVBAR ════ -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-content">
+      <div class="logo-group">
+        <img src="img/logo.bmt.png" alt="Logo BMT Syahidah" class="logo-icon" onerror="this.style.display='none'">
+        <div class="logo-text">
+          <span class="logo-title">BMT Syahidah</span>
+          <span class="logo-sub">Koperasi Syariah IKALUIN</span>
+        </div>
+      </div>
+      
+      <div class="nav-links">
+        <a href="#" class="nav-link">Beranda</a>
+        <a href="#layanan" class="nav-link">Layanan</a>
+        <a href="#tentang" class="nav-link">Tentang Kami</a>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn btn-outline" onclick="window.location.href='login.html'">Masuk</button>
+        <button class="btn btn-primary" onclick="window.location.href='registrasi.html'">Daftar Akun</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════ HERO SECTION ════ -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="reveal">
+        <div class="hero-tag">Platform Masa Depan</div>
+        <h1 class="hero-title">Ekosistem Syariah Modern untuk <span>Umat.</span></h1>
+        <p class="hero-desc">Bergabung dengan platform keuangan tepercaya IKALUIN. Kelola simpanan, pembiayaan, dan penyaluran ZIS secara cerdas, transparan, dan 100% bebas riba.</p>
+        <div style="display: flex; gap: 16px; justify-content: center; @media(min-width: 993px){ justify-content: flex-start; }">
+          <button class="btn btn-gold" onclick="window.location.href='registrasi.html'" style="animation: pulseGlow 3s infinite;">Mulai Hijrah Finansial</button>
+        </div>
+      </div>
+
+      <div class="hero-graphic reveal" style="transition-delay: 0.2s;">
+        <div class="floating-card">
+          <div class="fc-label">Simpanan Syahida — Total Saldo</div>
+          <div class="fc-amount"><span>Rp</span> 7.240.500</div>
+          <div class="fc-pill-group">
+            <div class="fc-pill">
+              <div class="fc-pill-title">Estimasi Bagi Hasil</div>
+              <div class="fc-pill-val" style="color:var(--gold-light)">Rp 51.200</div>
+            </div>
+            <div class="fc-pill">
+              <div class="fc-pill-title">Status Rekening</div>
+              <div class="fc-pill-val" style="color:#d4f0eb">Aktif ✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ FEATURES / LAYANAN ════ -->
+  <section class="features" id="layanan">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Solusi Terpadu</div>
+        <h2 class="section-title">Satu Aplikasi, Ragam Solusi Syariah</h2>
+        <p class="section-desc">Pilih produk dan layanan yang sesuai dengan kebutuhan finansial Anda, sepenuhnya sesuai dengan prinsip syariah yang adil dan transparan.</p>
+      </div>
+
+      <div class="feature-grid">
+        <!-- Simpanan -->
+        <div class="feat-card reveal" style="transition-delay: 0.1s;">
+          <div class="feat-icon" style="color: var(--teal-700)">💼</div>
+          <h3 class="feat-title">Simpanan & Investasi</h3>
+          <p class="feat-desc">Simpan dana dengan aman atau investasikan untuk masa depan berdasarkan akad Wadiah dan Mudharabah murni.</p>
+          <ul class="feat-list">
+            <li>Simpanan Syahida (Fleksibel)</li>
+            <li>Simpanan Pendidikan & Haji</li>
+            <li>Deposito Syariah (Bagi Hasil)</li>
+          </ul>
+        </div>
+
+        <!-- Pembiayaan -->
+        <div class="feat-card reveal" style="transition-delay: 0.2s;">
+          <div class="feat-icon" style="color: var(--gold)">🤝</div>
+          <h3 class="feat-title">Pembiayaan Produktif</h3>
+          <p class="feat-desc">Solusi cerdas untuk modal usaha atau kepemilikan aset tanpa beban bunga, dengan skema cicilan transparan.</p>
+          <ul class="feat-list">
+            <li>Modal Usaha Mikro & Menengah</li>
+            <li>Pembiayaan Kendaraan & Properti</li>
+            <li>Angsuran Tetap & Transparan</li>
+          </ul>
+        </div>
+
+        <!-- ZIS & Wakaf -->
+        <div class="feat-card reveal" style="transition-delay: 0.3s;">
+          <div class="feat-icon" style="color: #3b82f6">🌿</div>
+          <h3 class="feat-title">ZIS & Wakaf Digital</h3>
+          <p class="feat-desc">Salurkan pundi kebaikan Anda dengan mudah. Pantau laporan penyaluran dana keumatan secara real-time.</p>
+          <ul class="feat-list">
+            <li>Hitung & Bayar Zakat Otomatis</li>
+            <li>Wakaf Beasiswa & Kesehatan</li>
+            <li>Sertifikat Digital Real-time</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ VALUE PROPOSITION ════ -->
+  <section class="value-prop" id="tentang">
+    <div class="container vp-grid">
+      <div class="vp-image-wrap reveal">
+        <div class="vp-image-box">
+          <div class="vp-app-mock">
+            <div class="mock-head"></div>
+            <div class="mock-body">
+              <div class="mock-line" style="width: 45%"></div>
+              <div class="mock-line" style="width: 85%; height: 28px; margin-bottom: 12px"></div>
+              <div class="mock-line" style="width: 100%; height: 50px; background: rgba(0, 180, 216, 0.15)"></div>
+              <div class="mock-line" style="width: 100%; height: 70px"></div>
+              <div class="mock-line" style="width: 100%; height: 70px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vp-content reveal" style="transition-delay: 0.2s;">
+        <div class="section-tag">Nilai Tambah Kami</div>
+        <h2>Keuangan Cerdas yang Adil, Transparan & Berkah</h2>
+        <p>BMT Syahidah IKALUIN mengintegrasikan keandalan prinsip syariah klasik dengan efisiensi teknologi digital terkini, khusus dirancang untuk memberdayakan ekonomi umat.</p>
+        
+        <div class="vp-item">
+          <div class="vp-item-icon">⚖️</div>
+          <div class="vp-item-text">
+            <h4>100% Kepatuhan Syariah</h4>
+            <p>Seluruh operasional terotomatisasi dan diawasi penuh oleh Dewan Pengawas Syariah (DPS).</p>
+          </div>
+        </div>
+        
+        <div class="vp-item">
+          <div class="vp-item-icon">📱</div>
+          <div class="vp-item-text">
+            <h4>Akses Digital 24/7</h4>
+            <p>Pantau mutasi, bayar angsuran, hingga cetak sertifikat wakaf langsung dari *dashboard* interaktif Anda.</p>
+          </div>
+        </div>
+        
+        <div class="vp-item">
+          <div class="vp-item-icon">🎓</div>
+          <div class="vp-item-text">
+            <h4>Sinergi Komunitas Kuat</h4>
+            <p>Didukung oleh ekosistem dan jejaring luas alumni UIN Jakarta untuk kolaborasi bisnis yang nyata.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ CTA BANNER ════ -->
+  <section class="cta-banner">
+    <div class="container reveal">
+      <div class="cta-box">
+        <h2>Siap Membangun Ekonomi Keumatan?</h2>
+        <p>Proses integrasi akun secara online hanya membutuhkan waktu kurang dari 5 menit. Siapkan e-KTP Anda dan jadilah bagian dari revolusi syariah.</p>
+        <button class="btn-cta" onclick="window.location.href='registrasi.html'">
+          Daftar Sekarang →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ FOOTER ════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid reveal">
+        <div>
+          <div class="footer-brand">BMT Syahidah IKALUIN</div>
+          <p style="font-size: 14px; line-height: 1.8; margin-bottom: 24px;">
+            Inovasi koperasi syariah terpercaya untuk Alumni UIN Syarif Hidayatullah Jakarta dan masyarakat luas. Mendorong ekosistem keumatan yang modern, inklusif, dan penuh berkah.
+          </p>
+          <div style="font-family: 'Amiri', serif; font-size: 24px; color: var(--gold-light); opacity: 0.8;">
+            بيت المال والتمويل
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Layanan</h4>
+          <ul class="footer-links">
+            <li><a href="#">Simpanan Syariah</a></li>
+            <li><a href="#">Pembiayaan Modal</a></li>
+            <li><a href="#">Deposito Berjangka</a></li>
+            <li><a href="#">Zakat & Wakaf Digital</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Pusat Bantuan</h4>
+          <ul class="footer-links">
+            <li><a href="#">Panduan Registrasi</a></li>
+            <li><a href="#">Tanya Jawab (FAQ)</a></li>
+            <li><a href="#">Syarat & Ketentuan</a></li>
+            <li><a href="#">Kebijakan Privasi</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Hubungi Kami</h4>
+          <ul class="footer-links" style="font-size: 14px;">
+            <li style="display: flex; gap: 12px; align-items: flex-start;"><span>📍</span> Jl. Ir. H. Juanda No. 95, Ciputat, Tangerang Selatan, Banten</li>
+            <li style="display: flex; gap: 12px; align-items: center;"><span>✉️</span> bmt@ikaluin.ac.id</li>
+            <li style="display: flex; gap: 12px; align-items: center;"><span>📞</span> +62 811-0000-0000</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom reveal">
+        <div>&copy; 2026 BMT Syahidah IKALUIN. Hak Cipta Dilindungi.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCROLL SCRIPTS & OBSERVER -->
+  <script>
+    // Navbar Scroll Effect
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 20) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Reveal Animation on Scroll
+    document.addEventListener("DOMContentLoaded", function() {
+      const reveals = document.querySelectorAll(".reveal");
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting) {
+            entry.target.classList.add("active");
+            observer.unobserve(entry.target); // Hanya animasi sekali
+          }
+        });
+      }, {
+        threshold: 0.15
+      });
+
+      reveals.forEach(reveal => {
+        observer.observe(reveal);
+      });
+    });
+  </script>
+
+  <!-- FIREBASE CONFIGURATION -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"
+    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+      authDomain: "bmtuwin.firebaseapp.com",
+      projectId: "bmtuwin",
+      storageBucket: "bmtuwin.firebasestorage.app",
+      messagingSenderId: "654364047353",
+      appId: "1:654364047353:web:385871ac2db1d52392ef28"
+    }
+    
+    const app = initializeApp(firebaseConfig)
+  </script>
+</body>
+</html>
