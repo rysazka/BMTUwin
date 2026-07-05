@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Nazhir — BMT Syahidah IKALUIN</title>
+<link rel="icon" type="image/png" href="img/logo.bmt.png">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+  /* Gunakan CSS yang sama persis dengan wakaf-admin.html */
+  /* Copy seluruh CSS dari wakaf-admin.html di sini */
+</style>
+</head>
+<body>
+
+<div id="loader-overlay">
+  <div class="spinner"></div>
+  <div style="font-weight: 700; color: var(--teal-900);">Memuat Dashboard Nazhir...</div>
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-arabic">بيت المال والتمويل</div>
+    <div class="brand-name">BMT Syahidah</div>
+    <div class="brand-sub">Portal Nazhir · IKALUIN</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Nazhir</div>
+    <a href="nazhir-dashboard.html" class="nav-item active">
+      <span class="nav-icon"><i class="ph ph-chart-line-up"></i></span>
+      Dashboard Nazhir
+    </a>
+    <a href="nazhir-program.html" class="nav-item">
+      <span class="nav-icon"><i class="ph ph-plant"></i></span>
+      Kelola Program Wakaf
+    </a>
+    <a href="nazhir-wakif.html" class="nav-item">
+      <span class="nav-icon"><i class="ph ph-users"></i></span>
+      Data Wakif
+    </a>
+    <a href="nazhir-laporan.html" class="nav-item">
+      <span class="nav-icon"><i class="ph ph-receipt"></i></span>
+      Laporan Wakaf
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebar-avatar">NZ</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebar-name">Memuat...</div>
+        <div class="user-role">Nazhir Wakaf</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="main-content">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Dashboard Nazhir Wakaf</h1>
+      <p id="current-date">Memuat tanggal...</p>
+    </div>
+    <div class="topbar-right">
+      <div class="status-badge">
+        <span class="status-dot"></span> Nazhir Aktif
+      </div>
+    </div>
+  </div>
+
+  <div class="page">
+    <!-- Konten dashboard nazhir di sini -->
+    <h2>Selamat Datang, <span id="nazhir-name">Nazhir</span></h2>
+    <p>Kelola program wakaf, pantau wakif, dan buat laporan penyaluran.</p>
+  </div>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+    authDomain: "bmtuwin.firebaseapp.com",
+    projectId: "bmtuwin",
+    storageBucket: "bmtuwin.firebasestorage.app",
+    messagingSenderId: "654364047353",
+    appId: "1:654364047353:web:385871ac2db1d52392ef28"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  function formatTanggalHariIni() {
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    return new Date().toLocaleDateString('id-ID', options);
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const userRef = doc(db, 'users', user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      
+      // Cek role: hanya nazhir yang boleh akses halaman ini
+      if (userData.role !== 'nazhir') {
+        // Redirect ke portal yang sesuai
+        if (userData.role === 'admin') {
+          window.location.href = 'wakaf-admin.html';
+        } else {
+          window.location.href = 'portal.html';
+        }
+        return;
+      }
+
+      document.getElementById('sidebar-name').textContent = userData.namaLengkap || 'Nazhir';
+      document.getElementById('nazhir-name').textContent = userData.namaLengkap || 'Nazhir';
+    }
+
+    document.getElementById('current-date').textContent = formatTanggalHariIni();
+    document.getElementById('loader-overlay').style.display = 'none';
+  });
+</script>
+</body>
+</html>

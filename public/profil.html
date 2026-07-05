@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah — Profil Pengguna</title>
+<link rel="icon" type="image/png" href="img/logo.bmt.png">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+:root {
+  --teal-950: #021b4d; --teal-900: #023e8a; --teal-700: #0077b6; --teal-500: #0096c7;
+  --teal-300: #48cae4; --teal-100: #dbf0f8; --teal-50:  #f4f9fc;
+  --gold: #00b4d8; --gold-light:#90e0ef; 
+  --emerald: #10b981; --danger: #ef4444; --saffron: #f59e0b;
+  --cream: #f8fafc; --white: #ffffff;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --border: rgba(2, 62, 138, 0.15);
+  --radius-xl: 24px; --radius-lg: 16px; --radius-md: 12px;
+  --shadow-sm: 0 10px 30px rgba(2,17,54,0.04);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--ink); display: flex; height: 100vh; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal-300); }
+
+/* Layout & Sidebar */
+.sidebar { width: 280px; background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f); color: #fff; display: flex; flex-direction: column; position: relative; z-index: 20; }
+.sidebar-brand { padding: 32px 24px 24px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.sidebar-brand span { background: linear-gradient(90deg, var(--gold-light), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sidebar-nav { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.nav-item { padding: 14px 18px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+.nav-item i { font-size: 20px; }
+.nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+.nav-item.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: inset 4px 0 0 var(--gold-light); }
+
+/* Main Content */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: radial-gradient(circle at top right, var(--teal-50) 0%, var(--cream) 100%); }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.5); position: sticky; top: 0; z-index: 10; }
+.header-name { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+.hdr-btn { cursor: pointer; font-size: 20px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); color: var(--teal-900); transition: 0.2s; background: #fff;}
+.hdr-btn:hover { border-color: var(--teal-300); background: var(--teal-50); }
+
+/* Profile Layout */
+.page-container { padding: 40px; max-width: 1100px; width: 100%; margin: 0 auto; display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; }
+
+/* Left Panel: Avatar & Summary */
+.profile-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 32px 24px; text-align: center; box-shadow: var(--shadow-sm); }
+.avatar-wrap { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; }
+.avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.1); background: var(--teal-50); }
+.avatar-upload { position: absolute; bottom: 0; right: 0; width: 36px; height: 36px; background: var(--teal-900); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid #fff; transition: 0.3s; overflow: hidden; }
+.avatar-upload:hover { background: var(--teal-700); transform: scale(1.1); }
+.avatar-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.avatar-upload .upload-spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid #fff; border-radius: 50%; animation: spin 1s linear infinite; }
+.avatar-upload.uploading i { display: none; }
+.avatar-upload.uploading .upload-spinner { display: block; }
+
+.profile-name { font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.profile-role { font-size: 13px; font-weight: 700; color: var(--teal-700); background: var(--teal-100); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 24px; }
+.info-list { text-align: left; display: flex; flex-direction: column; gap: 16px; border-top: 1px dashed var(--border); padding-top: 24px; }
+.info-item { display: flex; gap: 12px; align-items: flex-start; }
+.info-item i { font-size: 20px; color: var(--teal-500); margin-top: 2px; }
+.info-text h4 { font-size: 12px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 2px; }
+.info-text p { font-size: 14px; font-weight: 600; color: var(--ink); word-break: break-all; }
+
+/* Right Panel: Tabs & Forms */
+.content-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); }
+.tabs { display: flex; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.5); }
+.tab-btn { flex: 1; padding: 20px; text-align: center; font-size: 14px; font-weight: 700; color: var(--ink-soft); cursor: pointer; border: none; background: transparent; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; border-bottom: 3px solid transparent; }
+.tab-btn:hover { color: var(--teal-700); background: rgba(0,119,182,0.02); }
+.tab-btn.active { color: var(--teal-900); border-bottom-color: var(--teal-900); background: #fff; }
+
+.tab-pane { padding: 32px; display: none; animation: popIn 0.4s ease; }
+.tab-pane.active { display: block; }
+@keyframes popIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Forms */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.form-group { margin-bottom: 24px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label { display: block; font-size: 13px; font-weight: 700; color: var(--ink-mid); margin-bottom: 8px; }
+.form-control { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: var(--radius-md); font-family: inherit; font-size: 14px; color: var(--ink); background: var(--cream); transition: 0.3s; }
+.form-control:focus { outline: none; border-color: var(--teal-500); background: #fff; box-shadow: 0 0 0 4px rgba(0,150,199,0.1); }
+.form-control:disabled { opacity: 0.7; cursor: not-allowed; }
+.input-hint { font-size: 12px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5; }
+
+/* Action Buttons */
+.btn-save { padding: 14px 24px; border-radius: var(--radius-md); font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer; border: none; background: var(--teal-900); color: #fff; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-save:hover { background: var(--teal-700); box-shadow: 0 10px 20px rgba(2,62,138,0.2); transform: translateY(-2px); }
+.btn-danger { background: var(--danger); }
+.btn-danger:hover { background: #dc2626; box-shadow: 0 10px 20px rgba(239,68,68,0.2); }
+
+/* Document Cards */
+.doc-list { display: flex; flex-direction: column; gap: 16px; }
+.doc-card { display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background: #fff; transition: 0.3s; }
+.doc-card:hover { border-color: var(--teal-300); box-shadow: var(--shadow-sm); }
+.doc-info { display: flex; align-items: center; gap: 16px; }
+.doc-icon { width: 48px; height: 48px; border-radius: var(--radius-md); background: var(--teal-50); color: var(--teal-700); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.doc-title { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.doc-meta { font-size: 12px; color: var(--ink-soft); }
+.btn-download { padding: 8px 16px; font-size: 12px; font-weight: 700; color: var(--teal-900); background: var(--teal-50); border: none; border-radius: 100px; cursor: pointer; transition: 0.2s; }
+.btn-download:hover { background: var(--teal-100); }
+
+/* Zone Bahaya */
+.danger-zone { border: 1px dashed var(--danger); border-radius: var(--radius-md); padding: 24px; background: #fef2f2; margin-top: 32px; }
+.danger-title { font-size: 16px; font-weight: 800; color: var(--danger); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.danger-text { font-size: 13px; color: #991b1b; line-height: 1.6; margin-bottom: 16px; }
+
+/* Loader & Toast */
+#loader-overlay { position: fixed; inset: 0; background: var(--cream); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.spinner { width: 40px; height: 40px; border: 4px solid var(--teal-100); border-top: 4px solid var(--teal-900); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.toast { position: fixed; top: 40px; right: 40px; background: var(--teal-900); color: #fff; padding: 16px 24px; border-radius: var(--radius-lg); font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 9999; opacity: 0; transform: translateY(-20px); transition: 0.4s; display: flex; align-items: center; gap: 12px; }
+.toast.error { background: var(--danger); }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  .page-container { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .tabs { flex-direction: column; }
+  .tab-btn { border-bottom: none; border-left: 3px solid transparent; justify-content: flex-start; padding: 16px 24px; }
+  .tab-btn.active { border-left-color: var(--teal-900); }
+}
+</style>
+</head>
+<body>
+
+  <div id="loader-overlay">
+    <div class="spinner"></div>
+    <div style="font-weight: 700; color: var(--teal-900);">Memuat Profil...</div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">BMT Syahidah<br><span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">Portal Anggota</span></div>
+    <nav class="sidebar-nav">
+       <a href="portal.html" class="nav-item"><i class="ph ph-house"></i> Beranda</a>
+       <a href="dashboard.html" class="nav-item"><i class="ph ph-chart-line-up"></i> Dashboard Wakaf</a>
+       <a href="simpanan.html" class="nav-item"><i class="ph ph-wallet"></i> Simpanan</a>
+       <a href="pembiayaan.html" class="nav-item"><i class="ph ph-handshake"></i> Pembiayaan</a>
+       <a href="ziswakaf.html" class="nav-item"><i class="ph ph-leaf"></i> ZIS & Wakaf</a>
+       <a href="riwayat.html" class="nav-item"><i class="ph ph-receipt"></i> Riwayat Transaksi</a>
+       <a href="profil.html" class="nav-item active"><i class="ph ph-user"></i> Profil Akun</a>
+    </nav>
+  </aside>
+
+  <div class="main-content">
+    <header class="header">
+      <div class="header-name">Pengaturan Profil</div>
+      <div class="header-right">
+        <button class="hdr-btn" onclick="window.location.href='login.html'" title="Keluar"><i class="ph ph-sign-out"></i></button>
+      </div>
+    </header>
+
+    <div class="page-container">
+      
+      <div class="profile-card">
+        <div class="avatar-wrap">
+          <img src="https://ui-avatars.com/api/?name=Azka+Raysa&background=0096c7&color=fff&size=200" id="ui-avatar" class="avatar-img" alt="Foto Profil">
+          <label class="avatar-upload" id="avatarUploadLabel" title="Unggah Foto Baru">
+            <i class="ph ph-camera"></i>
+            <div class="upload-spinner"></div>
+            <input type="file" accept="image/*" id="file-avatar">
+          </label>
+        </div>
+        <div class="profile-name" id="ui-name">Azka Raysa Pratama</div>
+        <div class="profile-role">Anggota BMT</div>
+        
+        <div class="info-list">
+          <div class="info-item">
+            <i class="ph ph-envelope-simple"></i>
+            <div class="info-text"><h4>Email Akun</h4><p id="ui-email">azka.raysa@email.com</p></div>
+          </div>
+          <div class="info-item">
+            <i class="ph ph-whatsapp-logo"></i>
+            <div class="info-text"><h4>Kontak WhatsApp</h4><p id="ui-phone">-</p></div>
+          </div>
+          <div class="info-item">
+            <i class="ph ph-shield-check"></i>
+            <div class="info-text"><h4>Metode Login</h4><p>Autentikasi Firebase</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('identitas')"><i class="ph ph-identification-card"></i> Identitas & Pajak</button>
+          <button class="tab-btn" onclick="switchTab('dokumen')"><i class="ph ph-files"></i> Laporan & Dokumen</button>
+          <button class="tab-btn" onclick="switchTab('keamanan')"><i class="ph ph-lock-key"></i> Keamanan Akun</button>
+        </div>
+
+        <div class="tab-pane active" id="tab-identitas">
+          <h3 style="font-size:18px; font-weight:800; margin-bottom:24px;">Informasi Pribadi & NPWP</h3>
+          
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="form-label">Nama Lengkap</label>
+              <input type="text" class="form-control" id="f-nama" placeholder="Sesuai KTP / Identitas Resmi">
+              <div class="input-hint">Nama ini akan tercetak pada laporan dan sertifikat. Opsi anonim (Hamba Allah) bisa dipilih secara spesifik saat transaksi ZISWAF.</div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Alamat Email</label>
+              <input type="email" class="form-control" id="f-email" disabled>
+              <div class="input-hint">Digunakan untuk login dan pengiriman e-receipt. Hubungi admin untuk mengubah email utama.</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nomor WhatsApp Aktif</label>
+              <input type="tel" class="form-control" id="f-phone" placeholder="Contoh: 081234567890">
+              <div class="input-hint">Sarana pengiriman notifikasi instan.</div>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Nomor Pokok Wajib Pajak (NPWP)</label>
+              <input type="text" class="form-control" id="f-npwp" placeholder="Format: 12.345.678.9-012.000">
+              <div class="input-hint" style="color:var(--teal-700); font-weight:600;"><i class="ph ph-info"></i> Penting: Lengkapi NPWP agar Bukti Setor Zakat (BSZ) dapat digunakan sebagai lampiran pengurang Penghasilan Bruto pada SPT Tahunan Anda.</div>
+            </div>
+          </div>
+
+          <button class="btn-save" id="btn-save-profile" onclick="simpanProfil()">
+            <i class="ph ph-floppy-disk"></i> Simpan Pembaruan Profil
+          </button>
+        </div>
+
+        <div class="tab-pane" id="tab-dokumen">
+          <h3 style="font-size:18px; font-weight:800; margin-bottom:16px;">Arsip Dokumen & BSZ</h3>
+          <p style="font-size:14px; color:var(--ink-soft); margin-bottom:24px;">Unduh ulang nota transaksi, Bukti Setor Zakat (BSZ), atau Sertifikat Wakaf Anda yang telah divalidasi sistem.</p>
+
+          <div class="doc-list" id="doc-list-container">
+            <div class="doc-card">
+              <div class="doc-info">
+                <div class="doc-icon"><i class="ph ph-file-pdf"></i></div>
+                <div>
+                  <div class="doc-title">Bukti Setor Zakat (BSZ) - Fitrah 1447H</div>
+                  <div class="doc-meta">Diterbitkan: 15 Ramadhan 1447 H • No: BSZ/001/26</div>
+                </div>
+              </div>
+              <button class="btn-download" onclick="unduhDokumen('BSZ')"><i class="ph ph-download-simple"></i> Unduh PDF</button>
+            </div>
+            
+            <div class="doc-card">
+              <div class="doc-info">
+                <div class="doc-icon"><i class="ph ph-certificate"></i></div>
+                <div>
+                  <div class="doc-title">Sertifikat Wakaf Tunai (Pembangunan Masjid)</div>
+                  <div class="doc-meta">Diterbitkan: 10 Maret 2026 • No: WKF/089/26</div>
+                </div>
+              </div>
+              <button class="btn-download" onclick="unduhDokumen('Sertifikat')"><i class="ph ph-download-simple"></i> Unduh PDF</button>
+            </div>
+          </div>
+          
+          <div style="margin-top:24px; text-align:center;">
+             <a href="riwayat.html" style="font-size:14px; font-weight:700; color:var(--teal-700);"><i class="ph ph-arrow-right"></i> Lihat Seluruh Riwayat Transaksi</a>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-keamanan">
+          <h3 style="font-size:18px; font-weight:800; margin-bottom:24px;">Pengaturan Sandi</h3>
+          
+          <div class="form-group">
+            <label class="form-label">Kata Sandi Baru</label>
+            <input type="password" class="form-control" id="f-pass-new" placeholder="Minimal 6 karakter">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Konfirmasi Kata Sandi Baru</label>
+            <input type="password" class="form-control" id="f-pass-confirm" placeholder="Ulangi kata sandi baru">
+          </div>
+          
+          <button class="btn-save" onclick="updateSandi()">
+            <i class="ph ph-key"></i> Perbarui Kata Sandi
+          </button>
+
+          <div class="danger-zone">
+            <div class="danger-title"><i class="ph ph-warning-circle"></i> Zona Berbahaya</div>
+            <div class="danger-text">Permintaan penghapusan akun akan menghilangkan akses Anda ke portal BMT secara permanen dan seluruh data akan diproses sesuai standar privasi data modern. Langkah ini tidak dapat dibatalkan.</div>
+            <button class="btn-save btn-danger" onclick="hapusAkun()">
+              <i class="ph ph-trash"></i> Ajukan Penghapusan Akun
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast-el">Notifikasi</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+      authDomain: "bmtuwin.firebaseapp.com",
+      projectId: "bmtuwin",
+      storageBucket: "bmtuwin.firebasestorage.app",
+      messagingSenderId: "654364047353",
+      appId: "1:654364047353:web:385871ac2db1d52392ef28"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    let currentUser = null;
+
+    // Elemen
+    const avatarImg = document.getElementById('ui-avatar');
+    const fileInput = document.getElementById('file-avatar');
+    const uploadLabel = document.getElementById('avatarUploadLabel');
+
+    // Fungsi untuk mengupdate foto profil di UI
+    function setAvatarImage(url) {
+      if (url) {
+        avatarImg.src = url;
+      } else {
+        // fallback ke UI Avatars
+        const name = document.getElementById('ui-name').textContent || 'User';
+        avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0096c7&color=fff&size=200`;
+      }
+    }
+
+    // Upload foto profil ke Firebase Storage
+    async function uploadFotoProfil(file) {
+    if (!currentUser) return;
+    uploadLabel.classList.add('uploading');
+    
+    try {
+        const storageRef = ref(storage, `profile-photos/${currentUser.uid}`);
+        const metadata = { contentType: file.type };
+        
+        const snapshot = await uploadBytes(storageRef, file, metadata);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+        fotoURL: downloadURL
+        });
+        
+        setAvatarImage(downloadURL);
+        showToast('Foto profil berhasil diperbarui!');
+    } catch (error) {
+        console.error('Upload foto gagal:', error);
+        showToast('Gagal mengunggah foto.', 'error');
+    } finally {
+        uploadLabel.classList.remove('uploading');
+        fileInput.value = '';
+    }
+    }
+
+    // Event listener untuk input file
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      // Validasi tipe dan ukuran (opsional)
+      if (!file.type.startsWith('image/')) {
+        showToast('Hanya file gambar yang diperbolehkan.', 'error');
+        fileInput.value = '';
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) { // 2MB
+        showToast('Ukuran gambar maksimal 2MB.', 'error');
+        fileInput.value = '';
+        return;
+      }
+      
+      uploadFotoProfil(file);
+    });
+
+    // Muat data profil dari Firestore
+    async function muatDataProfil(uid) {
+      try {
+        const docRef = doc(db, 'users', uid);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          
+          const nm = data.namaLengkap || 'Azka Raysa Pratama';
+          document.getElementById('f-nama').value = nm;
+          document.getElementById('ui-name').textContent = nm;
+          
+          // Tampilkan foto jika ada
+          if (data.fotoURL) {
+            setAvatarImage(data.fotoURL);
+          } else {
+            setAvatarImage(null); // pakai fallback
+          }
+          
+          if (data.telepon) {
+            document.getElementById('f-phone').value = data.telepon;
+            document.getElementById('ui-phone').textContent = data.telepon;
+          }
+          if (data.npwp) {
+            document.getElementById('f-npwp').value = data.npwp;
+          }
+        }
+      } catch (error) {
+        console.error("Gagal memuat profil", error);
+      }
+    }
+
+    // ---- Fungsi global untuk tombol ----
+    window.simpanProfil = async function() {
+      const btn = document.getElementById('btn-save-profile');
+      const nama = document.getElementById('f-nama').value;
+      const tel = document.getElementById('f-phone').value;
+      const npwp = document.getElementById('f-npwp').value;
+
+      if (!nama) return showToast("Nama lengkap wajib diisi", "error");
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Menyimpan...';
+
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          namaLengkap: nama,
+          telepon: tel,
+          npwp: npwp
+        });
+        
+        document.getElementById('ui-name').textContent = nama;
+        document.getElementById('ui-phone').textContent = tel || '-';
+        // Update avatar fallback jika tidak ada fotoURL
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        if (!userDoc.data().fotoURL) {
+          setAvatarImage(null);
+        }
+        
+        showToast("Pembaruan profil berhasil disimpan.");
+      } catch (error) {
+        showToast("Terjadi kesalahan sistem saat menyimpan data.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ph ph-floppy-disk"></i> Simpan Pembaruan Profil';
+      }
+    }
+
+    window.updateSandi = async function() {
+      const pass1 = document.getElementById('f-pass-new').value;
+      const pass2 = document.getElementById('f-pass-confirm').value;
+
+      if (!pass1 || pass1.length < 6) return showToast("Kata sandi minimal 6 karakter.", "error");
+      if (pass1 !== pass2) return showToast("Konfirmasi kata sandi tidak cocok.", "error");
+
+      try {
+        await updatePassword(currentUser, pass1);
+        showToast("Kata sandi berhasil diperbarui.");
+        document.getElementById('f-pass-new').value = '';
+        document.getElementById('f-pass-confirm').value = '';
+      } catch (error) {
+        if (error.code === 'auth/requires-recent-login') {
+          showToast("Sesi kedaluwarsa. Silakan keluar dan masuk kembali untuk mengubah sandi.", "error");
+        } else {
+          showToast("Gagal memperbarui kata sandi.", "error");
+        }
+      }
+    }
+
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      
+      event.currentTarget.classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    window.unduhDokumen = function(jenis) {
+      showToast(`Mengunduh dokumen ${jenis}... Fitur ini memerlukan integrasi backend PDF generator.`);
+    }
+
+    window.hapusAkun = function() {
+      const konfirm = confirm("Tindakan ini tidak dapat dibatalkan. Apakah Anda yakin ingin mengajukan penghapusan akun beserta seluruh data Anda?");
+      if (konfirm) {
+        showToast("Permintaan penghapusan telah dikirim ke Administrator BMT.");
+      }
+    }
+
+    window.showToast = function(msg, type = 'success') {
+      const el = document.getElementById('toast-el');
+      let tTimer;
+      el.innerHTML = type === 'success' ? `<i class="ph ph-check-circle" style="font-size:20px; color:var(--emerald)"></i> ${msg}` : `<i class="ph ph-warning-circle" style="font-size:20px;"></i> ${msg}`;
+      if (type === 'error') el.classList.add('error'); else el.classList.remove('error');
+      el.classList.add('show');
+      clearTimeout(tTimer);
+      tTimer = setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
+    // ---- Auth ----
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('f-email').value = user.email;
+        document.getElementById('ui-email').textContent = user.email;
+        
+        await muatDataProfil(user.uid);
+        document.getElementById('loader-overlay').style.display = 'none';
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      signOut(auth).then(() => window.location.href = 'login.html');
+    });
+  </script>
+</body>
+</html>

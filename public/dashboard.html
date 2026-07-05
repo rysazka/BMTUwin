@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah — Dashboard Wakaf</title>
+<link rel="icon" type="image/png" href="img/logo.bmt.png">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --teal-950: #021b4d; --teal-900: #023e8a; --teal-700: #0077b6; --teal-500: #0096c7;
+  --teal-300: #48cae4; --teal-100: #dbf0f8; --teal-50:  #f4f9fc;
+  --gold: #00b4d8; --gold-light:#90e0ef; 
+  --emerald: #10b981; --danger: #ef4444; --saffron: #f59e0b;
+  --cream: #f8fafc; --white: #ffffff;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --border: rgba(2, 62, 138, 0.15);
+  --radius-xl: 24px; --radius-lg: 16px; --radius-md: 12px;
+  --shadow-sm: 0 10px 30px rgba(2,17,54,0.04);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--ink); display: flex; height: 100vh; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal-300); }
+
+/* Sidebar */
+.sidebar { width: 280px; background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f); color: #fff; display: flex; flex-direction: column; position: relative; z-index: 20; }
+.sidebar-brand { padding: 32px 24px 24px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.sidebar-brand span { background: linear-gradient(90deg, var(--gold-light), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sidebar-nav { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.nav-item { padding: 14px 18px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+.nav-item i { font-size: 20px; }
+.nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+.nav-item.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: inset 4px 0 0 var(--gold-light); }
+
+/* Main Content */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: radial-gradient(circle at top right, var(--teal-50) 0%, var(--cream) 100%); }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.5); position: sticky; top: 0; z-index: 10; }
+.header-name { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+.hdr-btn { cursor: pointer; font-size: 20px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); color: var(--teal-900); transition: 0.2s; background: #fff;}
+.hdr-btn:hover { border-color: var(--teal-300); background: var(--teal-50); }
+
+/* Dashboard Layout */
+.page-container { padding: 40px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; align-items: start; }
+.panel { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--shadow-sm); }
+.panel-title { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+.panel-title i { color: var(--teal-500); font-size: 20px; }
+
+/* KPI Cards */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.kpi-card { background: linear-gradient(135deg, #fff, var(--teal-50)); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; position: relative; overflow: hidden; transition: transform 0.3s; }
+.kpi-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-sm); border-color: var(--teal-300); }
+.kpi-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+.ic-1 { background: #d1fae5; color: var(--emerald); }
+.ic-2 { background: var(--teal-100); color: var(--teal-700); }
+.ic-3 { background: #fef3c7; color: var(--saffron); }
+.ic-4 { background: #ede9fe; color: #8b5cf6; }
+.kpi-label { font-size: 13px; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
+.kpi-value { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 800; color: var(--teal-950); display: flex; align-items: baseline; gap: 4px; }
+.kpi-prefix { font-size: 16px; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--ink-mid); }
+
+/* Progress Cards */
+.prog-list { display: flex; flex-direction: column; gap: 16px; }
+.prog-card { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background: #fff; transition: 0.3s; }
+.prog-card:hover { border-color: var(--teal-300); }
+.prog-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.prog-name { font-size: 14px; font-weight: 800; color: var(--ink); }
+.prog-cat { font-size: 11px; font-weight: 700; background: var(--teal-50); color: var(--teal-700); padding: 4px 8px; border-radius: 4px; text-transform: uppercase; }
+.prog-bar-bg { width: 100%; height: 8px; background: var(--cream); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.prog-bar-fill { height: 100%; background: linear-gradient(90deg, var(--teal-500), var(--teal-300)); border-radius: 10px; width: 0%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+.prog-stats { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-mid); font-weight: 600; }
+
+/* Live Feed */
+.feed-list { display: flex; flex-direction: column; gap: 16px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
+.feed-item { display: flex; gap: 12px; align-items: center; animation: slideIn 0.4s ease; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+.feed-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal-100); color: var(--teal-900); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; text-transform: uppercase; }
+.feed-info h4 { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.feed-info p { font-size: 12px; color: var(--ink-soft); }
+.feed-amount { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 800; color: var(--emerald); }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { text-align: left; padding: 16px; font-size: 12px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; border-bottom: 2px solid var(--border); }
+.data-table td { padding: 16px; font-size: 13px; color: var(--ink-mid); border-bottom: 1px solid var(--border); font-weight: 500; }
+.data-table tr:hover { background: var(--teal-50); }
+.status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; }
+.stat-aktif { background: #d1fae5; color: #065f46; }
+.stat-selesai { background: var(--teal-100); color: var(--teal-900); }
+
+/* Buttons & CTA */
+.cta-box { background: linear-gradient(135deg, var(--teal-900), #001f3f); border-radius: var(--radius-xl); padding: 32px; color: #fff; text-align: center; position: relative; overflow: hidden; margin-bottom: 32px; }
+.cta-box::after { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+.cta-title { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: var(--teal-900); padding: 14px 24px; border-radius: var(--radius-md); font-size: 14px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; width: 100%; justify-content: center; margin-bottom: 12px; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+.btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #fff; padding: 12px 24px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; width: 100%; justify-content: center; }
+.btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+/* Empty States */
+.empty-state { text-align: center; padding: 32px 16px; color: var(--ink-soft); font-size: 14px; }
+.empty-state i { font-size: 32px; color: var(--border); margin-bottom: 12px; }
+
+@media (max-width: 1200px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .data-table { display: block; overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">BMT Syahidah<br><span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">Portal Anggota</span></div>
+    <nav class="sidebar-nav">
+       <a href="portal.html" class="nav-item"><i class="ph ph-house"></i> Beranda</a>
+       <a href="dashboard.html" class="nav-item active"><i class="ph ph-chart-line-up"></i> Dashboard Wakaf</a>
+       <a href="simpanan.html" class="nav-item"><i class="ph ph-wallet"></i> Simpanan</a>
+       <a href="pembiayaan.html" class="nav-item"><i class="ph ph-handshake"></i> Pembiayaan</a>
+       <a href="ziswakaf.html" class="nav-item"><i class="ph ph-leaf"></i> ZIS & Wakaf</a>
+       <a href="riwayat.html" class="nav-item"><i class="ph ph-receipt"></i> Riwayat Transaksi</a>
+       <a href="profil.html" class="nav-item"><i class="ph ph-user"></i> Profil Akun</a>
+    </nav>
+  </aside>
+
+  <div class="main-content">
+    <header class="header">
+      <div class="header-name">Dashboard Kinerja Wakaf</div>
+      <div class="header-right">
+        <button class="hdr-btn" onclick="window.location.href='login.html'" title="Keluar"><i class="ph ph-sign-out"></i></button>
+      </div>
+    </header>
+
+    <div class="page-container">
+      
+      <!-- KPI Section -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon ic-1"><i class="ph ph-coins"></i></div>
+          <div class="kpi-label">Total Wakaf Terhimpun</div>
+          <div class="kpi-value"><span class="kpi-prefix">Rp</span><span class="count-up" id="kpi-terhimpun" data-val="0">0</span></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon ic-2"><i class="ph ph-hand-heart"></i></div>
+          <div class="kpi-label">Total Wakaf Tersalurkan</div>
+          <div class="kpi-value"><span class="kpi-prefix">Rp</span><span class="count-up" id="kpi-tersalurkan" data-val="0">0</span></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon ic-3"><i class="ph ph-presentation-chart"></i></div>
+          <div class="kpi-label">Program Aktif</div>
+          <div class="kpi-value"><span class="count-up" id="kpi-aktif" data-val="0">0</span></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon ic-4"><i class="ph ph-users"></i></div>
+          <div class="kpi-label">Transaksi Wakaf</div>
+          <div class="kpi-value"><span class="count-up" id="kpi-wakif" data-val="0">0</span></div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <!-- Kolom Kiri -->
+        <div style="display:flex; flex-direction:column; gap:32px;">
+          
+          <div class="panel">
+            <div class="panel-title"><span>Tren Penghimpunan & Penyaluran</span> <i class="ph ph-chart-line"></i></div>
+            <canvas id="trendChart" height="100"></canvas>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title"><span>Progres Program Wakaf Aktif</span> <i class="ph ph-target"></i></div>
+            <div class="prog-list" id="active-programs">
+              <!-- Diisi JavaScript -->
+            </div>
+          </div>
+
+          <div class="panel" style="overflow-x: auto;">
+            <div class="panel-title"><span>Ringkasan Seluruh Program</span> <i class="ph ph-table"></i></div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nama Program</th>
+                  <th>Target</th>
+                  <th>Terkumpul</th>
+                  <th>Status</th>
+                  <th>Mulai</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                <!-- Diisi JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- Kolom Kanan -->
+        <div style="display:flex; flex-direction:column; gap:32px;">
+          
+          <div class="cta-box">
+            <div class="cta-title">Kekalkan Harta Anda</div>
+            <p style="font-size:13px; color:rgba(255,255,255,0.8); margin-bottom:24px; line-height:1.5;">Salurkan wakaf tunai atau aset untuk program produktif BMT Syahidah.</p>
+            <button class="btn-primary" onclick="window.location.href='ziswakaf.html'"><i class="ph ph-buildings"></i> Wakaf Sekarang</button>
+            <button class="btn-outline" onclick="window.location.href='ziswakaf.html'"><i class="ph ph-list-magnifying-glass"></i> Lihat Program</button>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title"><span>Distribusi Sektor Wakaf</span> <i class="ph ph-pie-chart"></i></div>
+            <div style="width: 80%; margin: 0 auto; position: relative;">
+              <canvas id="donutChart"></canvas>
+              <div id="donut-empty" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:12px; color:var(--ink-soft); font-weight:600;">Belum ada data</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title"><span>Aktivitas Terbaru</span> <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--emerald); background:#d1fae5; padding:4px 8px; border-radius:20px; font-weight:700;"><div style="width:8px; height:8px; background:var(--emerald); border-radius:50%; animation: pulse 2s infinite;"></div> Live</div></div>
+            <div class="feed-list" id="live-feed">
+              <!-- Diisi JavaScript -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, onSnapshot, query, orderBy, limit, where, collectionGroup } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    
+    // Konfigurasi Firebase (Sesuaikan kredensial yang valid)
+    const firebaseConfig = { 
+        apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+        authDomain: "bmtuwin.firebaseapp.com",
+        projectId: "bmtuwin" 
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+    Chart.defaults.color = "#64748b";
+
+    let donutChartInstance = null;
+    let trendChartInstance = null;
+
+    // Fungsi Animasi Angka
+    const animateValue = (obj, start, end, duration) => {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('id-ID');
+        if (progress < 1) window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    // Ambil Data Program dari Koleksi 'wakaf_programs'
+    async function fetchProgramData() {
+      const progContainer = document.getElementById('active-programs');
+      const tableBody = document.getElementById('table-body');
+      
+      try {
+        const snap = await getDocs(collection(db, 'wakaf_programs'));
+        
+        let totalTarget = 0;
+        let totalTerkumpul = 0;
+        let activeCount = 0;
+        let catData = { 'Pendidikan': 0, 'Ekonomi': 0, 'Kesehatan': 0, 'Sosial': 0 };
+
+        if(snap.empty) {
+          progContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="ph ph-folder-open"></i><br>Belum ada program wakaf yang berjalan.
+            </div>`;
+          tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--ink-soft); padding:24px;">Tidak ada data program untuk ditampilkan.</td></tr>`;
+          
+          document.getElementById('donut-empty').style.display = 'block';
+          renderDonutChart([0, 0, 0, 0]);
+          return;
+        }
+
+        progContainer.innerHTML = '';
+        tableBody.innerHTML = '';
+
+        snap.forEach(doc => {
+          const p = doc.data();
+          const target = p.target || 0;
+          const curr = p.curr || 0;
+          const pct = target > 0 ? Math.min(Math.round((curr / target) * 100), 100) : 0;
+          const cat = p.kategori || 'Sosial';
+          const stat = p.status || 'Aktif';
+          const dateStr = p.tanggal_mulai ? p.tanggal_mulai.toDate().toLocaleDateString('id-ID') : '-';
+
+          totalTarget += target;
+          totalTerkumpul += curr;
+          
+          if(catData[cat] !== undefined) {
+             catData[cat] += curr;
+          } else {
+             catData[cat] = curr;
+          }
+
+          if(stat !== 'Selesai') {
+            activeCount++;
+            progContainer.innerHTML += `
+              <div class="prog-card">
+                <div class="prog-header">
+                  <div class="prog-name">${p.nama}</div>
+                  <div class="prog-cat">${cat}</div>
+                </div>
+                <div class="prog-bar-bg"><div class="prog-bar-fill" style="width: ${pct}%"></div></div>
+                <div class="prog-stats">
+                  <span>Terkumpul: Rp ${curr.toLocaleString('id-ID')}</span>
+                  <span>${pct}% Target</span>
+                </div>
+              </div>
+            `;
+          }
+
+          const badgeCls = stat === 'Selesai' ? 'stat-selesai' : 'stat-aktif';
+          tableBody.innerHTML += `
+            <tr>
+              <td><strong>${p.nama}</strong></td>
+              <td>Rp ${target.toLocaleString('id-ID')}</td>
+              <td>Rp ${curr.toLocaleString('id-ID')} <br><small style="color:var(--teal-500)">${pct}%</small></td>
+              <td><span class="status-badge ${badgeCls}">${stat}</span></td>
+              <td>${dateStr}</td>
+            </tr>
+          `;
+        });
+
+        // Eksekusi Animasi KPI Data Aktual
+        animateValue(document.getElementById('kpi-terhimpun'), 0, totalTerkumpul, 1500);
+        animateValue(document.getElementById('kpi-aktif'), 0, activeCount, 1000);
+        
+        // Asumsi penyaluran berjalan 70% dari himpunan (sebagai placeholder logika bisnis)
+        animateValue(document.getElementById('kpi-tersalurkan'), 0, Math.floor(totalTerkumpul * 0.7), 1500);
+
+        // Render Donut Chart Aktual
+        const donutValues = [catData['Pendidikan'], catData['Ekonomi'], catData['Kesehatan'], catData['Sosial']];
+        renderDonutChart(donutValues);
+
+      } catch (error) {
+        console.error("Gagal memuat data program: ", error);
+      }
+    }
+
+    // Ambil Live Feed dari seluruh subkoleksi 'ziswaf'
+    function listenLiveFeed() {
+      const feedContainer = document.getElementById('live-feed');
+      const q = query(
+        collectionGroup(db, 'ziswaf'), 
+        where('jenis', '==', 'wakaf'), 
+        orderBy('tanggal', 'desc'), 
+        limit(15)
+      );
+
+      onSnapshot(q, (snapshot) => {
+        feedContainer.innerHTML = '';
+        let countWakif = snapshot.docs.length; 
+        
+        animateValue(document.getElementById('kpi-wakif'), 0, countWakif, 1000);
+
+        if(snapshot.empty) {
+          feedContainer.innerHTML = `
+            <div class="empty-state" style="padding:16px;">
+              <i class="ph ph-clock" style="font-size:24px;"></i><br>Belum ada riwayat transaksi.
+            </div>`;
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const nm = d.nama_tertera || "Hamba Allah";
+          const program = d.program || "Wakaf Tunai";
+          const amt = d.nominal || 0;
+          const initial = nm.charAt(0);
+
+          feedContainer.innerHTML += `
+            <div class="feed-item">
+              <div class="feed-avatar">${initial}</div>
+              <div class="feed-info">
+                <h4>${nm}</h4>
+                <p>Penyaluran ${program}</p>
+              </div>
+              <div class="feed-amount">Rp ${amt.toLocaleString('id-ID')}</div>
+            </div>
+          `;
+        });
+      });
+    }
+
+    // Render Grafik Tren (Placeholder Kosong Sampai Ada Engine Analitik Historis)
+    function renderTrendChart() {
+      const ctxTrend = document.getElementById('trendChart').getContext('2d');
+      trendChartInstance = new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+          labels: ['Nov', 'Des', 'Jan', 'Feb', 'Mar', 'Apr'],
+          datasets: [
+            {
+              label: 'Penghimpunan',
+              data: [0, 0, 0, 0, 0, 0], // Kosong agar dinamis sesuai data asli nanti
+              borderColor: '#0096c7', backgroundColor: 'rgba(0, 150, 199, 0.1)',
+              borderWidth: 3, tension: 0.4, fill: true
+            }
+          ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, suggestedMax: 100 } } }
+      });
+    }
+
+    // Render Grafik Distribusi Kategori
+    function renderDonutChart(dataValues) {
+      const ctxDonut = document.getElementById('donutChart').getContext('2d');
+      if (donutChartInstance) {
+          donutChartInstance.destroy();
+      }
+      
+      let sum = dataValues.reduce((a, b) => a + b, 0);
+      if (sum === 0) {
+          document.getElementById('donut-empty').style.display = 'block';
+      } else {
+          document.getElementById('donut-empty').style.display = 'none';
+      }
+
+      donutChartInstance = new Chart(ctxDonut, {
+        type: 'doughnut',
+        data: {
+          labels: ['Pendidikan', 'Ekonomi', 'Kesehatan', 'Sosial'],
+          datasets: [{
+            data: dataValues,
+            backgroundColor: ['#0077b6', '#f59e0b', '#10b981', '#8b5cf6'],
+            borderWidth: 0
+          }]
+        },
+        options: { cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+      });
+    }
+
+    // Inisialisasi Fungsi
+    fetchProgramData();
+    listenLiveFeed();
+    renderTrendChart();
+
+  </script>
+</body>
+</html>

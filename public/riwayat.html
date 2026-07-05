@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah — Riwayat Transaksi</title>
+<link rel="icon" type="image/png" href="img/logo.bmt.png">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS & BASE
+════════════════════════════════════════ */
+:root {
+  --teal-950: #021b4d; --teal-900: #023e8a; --teal-700: #0077b6; --teal-500: #0096c7;
+  --teal-300: #48cae4; --teal-100: #dbf0f8; --teal-50:  #f4f9fc;
+  --gold: #00b4d8; --gold-real: #d4af37; --gold-light:#90e0ef; --gold-pale:#fef3c7;
+  --emerald: #10b981; --danger: #ef4444; --saffron: #f59e0b;
+  --cream: #f8fafc; --white: #ffffff;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --border: rgba(2, 62, 138, 0.15);
+  --radius-xl: 24px; --radius-lg: 16px; --radius-md: 12px;
+  --shadow-sm: 0 10px 30px rgba(2,17,54,0.04);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--ink); display: flex; height: 100vh; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal-300); }
+
+/* ════════ LAYOUT & SIDEBAR ════════ */
+.sidebar { width: 280px; background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f); color: #fff; display: flex; flex-direction: column; position: relative; z-index: 20; }
+.sidebar-brand { padding: 32px 24px 24px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.sidebar-brand span { background: linear-gradient(90deg, var(--gold-light), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sidebar-nav { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.nav-item { padding: 14px 18px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+.nav-item i { font-size: 20px; }
+.nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+.nav-item.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: inset 4px 0 0 var(--gold-light); }
+
+/* ════════ MAIN CONTENT ════════ */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: radial-gradient(circle at top right, var(--teal-50) 0%, var(--cream) 100%); }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.5); position: sticky; top: 0; z-index: 10; }
+.header-name { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+.hdr-btn { cursor: pointer; font-size: 20px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); color: var(--teal-900); transition: 0.2s; background: #fff;}
+.hdr-btn:hover { border-color: var(--teal-300); background: var(--teal-50); }
+
+/* ════════ PAGE & FILTER STYLES ════════ */
+.page-container { padding: 40px; max-width: 1000px; width: 100%; margin: 0 auto; }
+.page-title { font-size: 28px; font-weight: 800; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.5px; }
+.page-desc { color: var(--ink-soft); font-size: 15px; margin-bottom: 32px; }
+
+.filter-bar {
+  display: flex; gap: 12px; margin-bottom: 32px; background: rgba(255,255,255,0.6);
+  padding: 10px; border-radius: 100px; border: 1px solid var(--border);
+  backdrop-filter: blur(10px); position: sticky; top: 85px; z-index: 9;
+  box-shadow: 0 10px 20px rgba(2, 17, 54, 0.03); overflow-x: auto;
+}
+.filter-btn {
+  padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: 0.3s; color: var(--ink-mid); border: none;
+  background: transparent; display: flex; align-items: center; gap: 8px; white-space: nowrap;
+}
+.filter-btn i { font-size: 18px; }
+.filter-btn:hover { color: var(--teal-900); background: rgba(255,255,255,0.8); }
+.filter-btn.active { background: var(--teal-900); color: #fff; box-shadow: 0 4px 15px rgba(2,62,138,0.2); }
+
+/* ════════ TIMELINE & CARDS ════════ */
+.timeline { display: flex; flex-direction: column; gap: 24px; position: relative; }
+.timeline::before {
+  content: ''; position: absolute; left: 31px; top: 10px; bottom: 10px;
+  width: 2px; background: var(--border); border-radius: 2px;
+}
+
+.tx-item { display: flex; gap: 24px; position: relative; animation: popIn 0.5s ease; }
+@keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+.tx-icon-wrap {
+  width: 64px; height: 64px; border-radius: 50%; background: #fff;
+  border: 4px solid var(--cream); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; position: relative; z-index: 2; flex-shrink: 0;
+}
+.tx-icon-wrap.in { color: var(--emerald); background: #d1fae5; border-color: #ecfdf5; }
+.tx-icon-wrap.out { color: var(--danger); background: #fee2e2; border-color: #fef2f2; }
+.tx-icon-wrap.pembiayaan { color: var(--teal-700); background: var(--teal-100); border-color: var(--teal-50); }
+.tx-icon-wrap.ziswaf { color: var(--saffron); background: var(--gold-pale); border-color: #fffbeb; }
+
+.tx-card {
+  flex: 1; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+  border: 1px solid var(--border); border-radius: var(--radius-xl);
+  padding: 24px; transition: all 0.3s; position: relative; overflow: hidden;
+}
+.tx-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-sm); background: #fff; border-color: var(--teal-300); }
+
+/* Color indicators on left edge */
+.tx-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
+.tx-card.in::before { background: var(--emerald); }
+.tx-card.out::before { background: var(--danger); }
+.tx-card.pembiayaan::before { background: var(--teal-500); }
+.tx-card.ziswaf::before { background: var(--saffron); }
+
+.tx-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px dashed var(--border); padding-bottom: 16px; }
+.tx-title { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.tx-date { font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
+.tx-amount { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 800; }
+.tx-amount.in { color: var(--emerald); }
+.tx-amount.out { color: var(--danger); }
+.tx-amount.neutral { color: var(--teal-900); }
+
+.tx-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.detail-item { display: flex; flex-direction: column; gap: 4px; }
+.detail-label { font-size: 12px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.5px; }
+.detail-value { font-size: 14px; font-weight: 600; color: var(--ink-mid); line-height: 1.5; }
+.detail-value.badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; background: var(--teal-50); color: var(--teal-900); width: fit-content; }
+
+/* Empty State */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--ink-soft); background: rgba(255,255,255,0.5); border: 2px dashed var(--border); border-radius: var(--radius-xl); margin-top: 24px; }
+.empty-state i { font-size: 48px; margin-bottom: 16px; color: var(--border); }
+.empty-state h4 { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+
+/* Loader Overlay */
+#loader-overlay { position: fixed; inset: 0; background: var(--cream); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.spinner { width: 40px; height: 40px; border: 4px solid var(--teal-100); border-top: 4px solid var(--teal-900); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+  .timeline::before { display: none; }
+  .tx-item { flex-direction: column; gap: 12px; }
+  .tx-icon-wrap { display: none; }
+  .tx-header { flex-direction: column; gap: 8px; }
+  .tx-amount { align-self: flex-start; }
+}
+</style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader-overlay">
+    <div class="spinner"></div>
+    <div style="font-weight: 700; color: var(--teal-900);">Memuat Riwayat...</div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">BMT Syahidah<br><span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">Portal Anggota</span></div>
+    <nav class="sidebar-nav">
+       <a href="portal.html" class="nav-item"><i class="ph ph-house"></i> Beranda</a>
+       <a href="dashboard.html" class="nav-item"><i class="ph ph-chart-line-up"></i> Dashboard Wakaf</a>
+       <a href="simpanan.html" class="nav-item"><i class="ph ph-wallet"></i> Simpanan</a>
+       <a href="pembiayaan.html" class="nav-item"><i class="ph ph-handshake"></i> Pembiayaan</a>
+       <a href="ziswakaf.html" class="nav-item"><i class="ph ph-leaf"></i> ZIS & Wakaf</a>
+       <a href="riwayat.html" class="nav-item active"><i class="ph ph-receipt"></i> Riwayat Transaksi</a>
+       <a href="profil.html" class="nav-item"><i class="ph ph-user"></i> Profil Akun</a>
+    </nav>
+  </aside>
+
+  <div class="main-content">
+    <header class="header">
+      <div class="header-name">Riwayat Transaksi Terpadu</div>
+      <div class="header-right">
+        <button class="hdr-btn" id="btnLogout" title="Keluar"><i class="ph ph-sign-out"></i></button>
+      </div>
+    </header>
+
+    <div class="page-container">
+      <h1 class="page-title">Aktivitas Finansial Anda</h1>
+      <p class="page-desc">Lacak seluruh riwayat simpanan, pengajuan pembiayaan, serta penyaluran ZIS dan Wakaf Anda secara mendetail dan transparan.</p>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all" onclick="applyFilter('all', this)"><i class="ph ph-squares-four"></i> Semua Transaksi</button>
+        <button class="filter-btn" data-filter="simpanan" onclick="applyFilter('simpanan', this)"><i class="ph ph-wallet"></i> Simpanan</button>
+        <button class="filter-btn" data-filter="pembiayaan" onclick="applyFilter('pembiayaan', this)"><i class="ph ph-handshake"></i> Pembiayaan</button>
+        <button class="filter-btn" data-filter="ziswaf" onclick="applyFilter('ziswaf', this)"><i class="ph ph-heart-straight"></i> ZIS & Wakaf</button>
+      </div>
+
+      <div class="timeline" id="tx-list">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+      authDomain: "bmtuwin.firebaseapp.com",
+      projectId: "bmtuwin",
+      storageBucket: "bmtuwin.firebasestorage.app",
+      messagingSenderId: "654364047353",
+      appId: "1:654364047353:web:385871ac2db1d52392ef28"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let allTransactions = [];
+
+    // --- FETCH DATA ---
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await fetchAllData(user.uid);
+        document.getElementById('loader-overlay').style.display = 'none';
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    async function fetchAllData(uid) {
+      allTransactions = [];
+
+      try {
+        // 1. Fetch Simpanan (Mutasi)
+        const mutasiSnap = await getDocs(collection(db, `users/${uid}/mutasi`));
+        mutasiSnap.forEach(doc => {
+          const d = doc.data();
+          allTransactions.push({
+            id: doc.id,
+            category: 'simpanan',
+            timestamp: d.tanggal ? d.tanggal.toDate() : new Date(),
+            data: d
+          });
+        });
+
+        // 2. Fetch Pembiayaan
+        const pembiayaanSnap = await getDocs(collection(db, `users/${uid}/pembiayaan`));
+        pembiayaanSnap.forEach(doc => {
+          const d = doc.data();
+          allTransactions.push({
+            id: doc.id,
+            category: 'pembiayaan',
+            timestamp: d.tanggal ? d.tanggal.toDate() : new Date(),
+            data: d
+          });
+        });
+
+        // 3. Fetch ZISWAF
+        const ziswafSnap = await getDocs(collection(db, `users/${uid}/ziswaf`));
+        ziswafSnap.forEach(doc => {
+          const d = doc.data();
+          allTransactions.push({
+            id: doc.id,
+            category: 'ziswaf',
+            timestamp: d.tanggal ? d.tanggal.toDate() : new Date(),
+            data: d
+          });
+        });
+
+        // Sort Descending (Newest first)
+        allTransactions.sort((a, b) => b.timestamp - a.timestamp);
+        renderTransactions('all');
+
+      } catch (error) {
+        console.error("Gagal memuat data riwayat:", error);
+      }
+    }
+
+    // --- RENDER LOGIC ---
+    window.applyFilter = function(filter, element) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+      renderTransactions(filter);
+    }
+
+    function renderTransactions(filter) {
+      const container = document.getElementById('tx-list');
+      let html = '';
+
+      const filtered = filter === 'all' ? allTransactions : allTransactions.filter(tx => tx.category === filter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="ph ph-files"></i>
+            <h4>Belum Ada Riwayat</h4>
+            <p>Tidak ditemukan data transaksi untuk kategori ini.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(tx => {
+        const dateStr = formatDateTime(tx.timestamp);
+        
+        if (tx.category === 'simpanan') {
+          html += buildSimpananCard(tx.data, dateStr);
+        } else if (tx.category === 'pembiayaan') {
+          html += buildPembiayaanCard(tx.data, dateStr);
+        } else if (tx.category === 'ziswaf') {
+          html += buildZiswafCard(tx.data, dateStr);
+        }
+      });
+
+      container.innerHTML = html;
+    }
+
+    // --- HTML BUILDERS ---
+
+    function buildSimpananCard(data, dateStr) {
+      const isIn = data.tipe === 'masuk';
+      const iconClass = isIn ? 'in' : 'out';
+      const iconPh = isIn ? 'ph-trend-up' : 'ph-trend-down';
+      const sign = isIn ? '+' : '-';
+      const amountColor = isIn ? 'in' : 'out';
+      
+      // Detil spesifik
+      let detailExtra = '';
+      if(isIn) {
+        detailExtra = `<div class="detail-item"><span class="detail-label">Sumber Dana</span><span class="detail-value">Setoran Anggota</span></div>`;
+      } else {
+        detailExtra = `<div class="detail-item"><span class="detail-label">Tujuan Penarikan</span><span class="detail-value">Penarikan Tunai / Transfer</span></div>`;
+      }
+
+      return `
+        <div class="tx-item">
+          <div class="tx-icon-wrap ${iconClass}"><i class="ph ${iconPh}"></i></div>
+          <div class="tx-card ${iconClass}">
+            <div class="tx-header">
+              <div>
+                <div class="tx-title">${data.judul}</div>
+                <div class="tx-date"><i class="ph ph-calendar-blank"></i> ${dateStr}</div>
+              </div>
+              <div class="tx-amount ${amountColor}">${sign} Rp ${data.nominal.toLocaleString('id-ID')}</div>
+            </div>
+            <div class="tx-details">
+              <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value badge">Selesai & Tercatat</span></div>
+              ${detailExtra}
+              <div class="detail-item"><span class="detail-label">Kategori</span><span class="detail-value">Simpanan BMT</span></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildPembiayaanCard(data, dateStr) {
+      // Akad name formatting
+      let akadLabel = 'Pembiayaan';
+      if(data.akad === 'murabahah') akadLabel = 'Murabahah (Jual-Beli)';
+      if(data.akad === 'mudharabah') akadLabel = 'Mudharabah / Musyarakah';
+      if(data.akad === 'ijarah') akadLabel = 'Ijarah (Sewa/Jasa)';
+
+      let statusBadgeStyle = 'background: #fef3c7; color: #d97706;'; // Menunggu
+      if(data.status === 'Disetujui') statusBadgeStyle = 'background: #d1fae5; color: #059669;';
+      if(data.status === 'Ditolak') statusBadgeStyle = 'background: #fee2e2; color: #dc2626;';
+
+      return `
+        <div class="tx-item">
+          <div class="tx-icon-wrap pembiayaan"><i class="ph ph-handshake"></i></div>
+          <div class="tx-card pembiayaan">
+            <div class="tx-header">
+              <div>
+                <div class="tx-title">Pengajuan: ${data.nama_produk}</div>
+                <div class="tx-date"><i class="ph ph-calendar-blank"></i> Diajukan pada: ${dateStr}</div>
+              </div>
+              <div class="tx-amount neutral">Rp ${data.nominal.toLocaleString('id-ID')}</div>
+            </div>
+            <div class="tx-details">
+              <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value badge" style="${statusBadgeStyle}">${data.status}</span></div>
+              <div class="detail-item"><span class="detail-label">Prinsip Akad</span><span class="detail-value">${akadLabel}</span></div>
+              <div class="detail-item"><span class="detail-label">Jangka Waktu (Tenor)</span><span class="detail-value">${data.tenor} Bulan</span></div>
+              <div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">Catatan Tujuan</span><span class="detail-value" style="font-style: italic;">"${data.catatan}"</span></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildZiswafCard(data, dateStr) {
+      let iconPh = 'ph-heart-straight';
+      let judul = data.jenis.toUpperCase();
+      if(data.jenis === 'zakat') iconPh = 'ph-scales';
+      if(data.jenis === 'wakaf') iconPh = 'ph-buildings';
+      if(data.jenis === 'infak') iconPh = 'ph-hand-coins';
+
+      let nominalDisplay = `Rp ${data.nominal.toLocaleString('id-ID')}`;
+      if(data.nominal === 0) nominalDisplay = `Aset Properti`; // Wakaf barang
+
+      let methodStr = data.metode;
+      if(methodStr === 'saldo') methodStr = 'Saldo Rekening BMT';
+      if(methodStr === 'qris') methodStr = 'QRIS e-Wallet';
+      if(methodStr === 'va') methodStr = 'Virtual Account';
+      if(!methodStr) methodStr = 'Tindak Lanjut Survei Aset';
+
+      return `
+        <div class="tx-item">
+          <div class="tx-icon-wrap ziswaf"><i class="ph ${iconPh}"></i></div>
+          <div class="tx-card ziswaf">
+            <div class="tx-header">
+              <div>
+                <div class="tx-title">Penyaluran ${judul} ${data.program ? `— ${data.program}` : ''}</div>
+                <div class="tx-date"><i class="ph ph-calendar-blank"></i> ${dateStr}</div>
+              </div>
+              <div class="tx-amount neutral">${nominalDisplay}</div>
+            </div>
+            <div class="tx-details">
+              <div class="detail-item"><span class="detail-label">Atas Nama</span><span class="detail-value">${data.nama_tertera}</span></div>
+              <div class="detail-item"><span class="detail-label">Metode Penyaluran</span><span class="detail-value">${methodStr}</span></div>
+              <div class="detail-item"><span class="detail-label">Validasi Sistem</span><span class="detail-value badge">Akad Sah & Selesai</span></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function formatDateTime(date) {
+      const d = new Date(date);
+      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} WIB`;
+    }
+
+    // --- LOGOUT ---
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      signOut(auth).then(() => window.location.href = 'login.html');
+    });
+  </script>
+</body>
+</html>

@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BMT Syahidah IKALUIN — Koperasi Syariah Modern</title>
+<link rel="icon" type="image/png" href="img/logo.bmt.png">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Phosphor Icons -->
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
 <style>
 /* ════════════════════════════════════════
    DESIGN TOKENS & BASE
@@ -17,7 +20,7 @@
   --teal-300: #48cae4;
   --teal-100: #dbf0f8;
   --teal-50:  #f4f9fc;
-  --gold:     #00b4d8; /* Tetap disesuaikan dengan token asli */
+  --gold:     #00b4d8; 
   --gold-real: #d4af37;
   --gold-light:#90e0ef;
   --gold-pale:#dcf3fa;
@@ -365,7 +368,7 @@ a { text-decoration: none; color: inherit; }
 .vp-item-icon {
   width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
   background: var(--gold-pale); color: var(--teal-900);
-  display: flex; align-items: center; justify-content: center; font-size: 24px;
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
   box-shadow: 0 8px 20px rgba(0, 180, 216, 0.15);
 }
 .vp-item-text h4 { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
@@ -455,6 +458,7 @@ a { text-decoration: none; color: inherit; }
   text-align: center;
   font-size: 14px; 
 }
+.footer-icon { font-size: 18px; margin-top: 2px; color: var(--gold-light); }
 
 /* Responsive basics */
 @media (max-width: 992px) {
@@ -544,7 +548,9 @@ a { text-decoration: none; color: inherit; }
       <div class="feature-grid">
         <!-- Simpanan -->
         <div class="feat-card reveal" style="transition-delay: 0.1s;">
-          <div class="feat-icon" style="color: var(--teal-700)">💼</div>
+          <div class="feat-icon" style="color: var(--teal-700)">
+            <i class="ph ph-wallet"></i>
+          </div>
           <h3 class="feat-title">Simpanan & Investasi</h3>
           <p class="feat-desc">Simpan dana dengan aman atau investasikan untuk masa depan berdasarkan akad Wadiah dan Mudharabah murni.</p>
           <ul class="feat-list">
@@ -556,7 +562,9 @@ a { text-decoration: none; color: inherit; }
 
         <!-- Pembiayaan -->
         <div class="feat-card reveal" style="transition-delay: 0.2s;">
-          <div class="feat-icon" style="color: var(--gold)">🤝</div>
+          <div class="feat-icon" style="color: var(--gold)">
+            <i class="ph ph-handshake"></i>
+          </div>
           <h3 class="feat-title">Pembiayaan Produktif</h3>
           <p class="feat-desc">Solusi cerdas untuk modal usaha atau kepemilikan aset tanpa beban bunga, dengan skema cicilan transparan.</p>
           <ul class="feat-list">
@@ -568,7 +576,9 @@ a { text-decoration: none; color: inherit; }
 
         <!-- ZIS & Wakaf -->
         <div class="feat-card reveal" style="transition-delay: 0.3s;">
-          <div class="feat-icon" style="color: #3b82f6">🌿</div>
+          <div class="feat-icon" style="color: #3b82f6">
+            <i class="ph ph-plant"></i>
+          </div>
           <h3 class="feat-title">ZIS & Wakaf Digital</h3>
           <p class="feat-desc">Salurkan pundi kebaikan Anda dengan mudah. Pantau laporan penyaluran dana keumatan secara real-time.</p>
           <ul class="feat-list">
@@ -605,7 +615,9 @@ a { text-decoration: none; color: inherit; }
         <p>BMT Syahidah IKALUIN mengintegrasikan keandalan prinsip syariah klasik dengan efisiensi teknologi digital terkini, khusus dirancang untuk memberdayakan ekonomi umat.</p>
         
         <div class="vp-item">
-          <div class="vp-item-icon">⚖️</div>
+          <div class="vp-item-icon">
+            <i class="ph ph-scales"></i>
+          </div>
           <div class="vp-item-text">
             <h4>100% Kepatuhan Syariah</h4>
             <p>Seluruh operasional terotomatisasi dan diawasi penuh oleh Dewan Pengawas Syariah (DPS).</p>
@@ -613,7 +625,9 @@ a { text-decoration: none; color: inherit; }
         </div>
         
         <div class="vp-item">
-          <div class="vp-item-icon">📱</div>
+          <div class="vp-item-icon">
+            <i class="ph ph-device-mobile"></i>
+          </div>
           <div class="vp-item-text">
             <h4>Akses Digital 24/7</h4>
             <p>Pantau mutasi, bayar angsuran, hingga cetak sertifikat wakaf langsung dari *dashboard* interaktif Anda.</p>
@@ -621,7 +635,9 @@ a { text-decoration: none; color: inherit; }
         </div>
         
         <div class="vp-item">
-          <div class="vp-item-icon">🎓</div>
+          <div class="vp-item-icon">
+            <i class="ph ph-graduation-cap"></i>
+          </div>
           <div class="vp-item-text">
             <h4>Sinergi Komunitas Kuat</h4>
             <p>Didukung oleh ekosistem dan jejaring luas alumni UIN Jakarta untuk kolaborasi bisnis yang nyata.</p>
@@ -681,9 +697,15 @@ a { text-decoration: none; color: inherit; }
         <div>
           <h4 class="footer-title">Hubungi Kami</h4>
           <ul class="footer-links" style="font-size: 14px;">
-            <li style="display: flex; gap: 12px; align-items: flex-start;"><span>📍</span> Jl. Ir. H. Juanda No. 95, Ciputat, Tangerang Selatan, Banten</li>
-            <li style="display: flex; gap: 12px; align-items: center;"><span>✉️</span> bmt@ikaluin.ac.id</li>
-            <li style="display: flex; gap: 12px; align-items: center;"><span>📞</span> +62 811-0000-0000</li>
+            <li style="display: flex; gap: 12px; align-items: flex-start;">
+              <i class="ph ph-map-pin footer-icon"></i> Jl. Ir. H. Juanda No. 95, Ciputat, Tangerang Selatan, Banten
+            </li>
+            <li style="display: flex; gap: 12px; align-items: center;">
+              <i class="ph ph-envelope footer-icon"></i> bmt@ikaluin.ac.id
+            </li>
+            <li style="display: flex; gap: 12px; align-items: center;">
+              <i class="ph ph-phone footer-icon"></i> +62 811-0000-0000
+            </li>
           </ul>
         </div>
       </div>

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMT Syahidah — ZIS & Wakaf Digital</title>
+<link rel="icon" type="image/png" href="img/logo.bmt.png">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS & BASE
+════════════════════════════════════════ */
+:root {
+  --teal-950: #021b4d; --teal-900: #023e8a; --teal-700: #0077b6; --teal-500: #0096c7;
+  --teal-300: #48cae4; --teal-100: #dbf0f8; --teal-50:  #f4f9fc;
+  --gold: #00b4d8; --gold-real: #d4af37; --gold-light:#90e0ef;
+  --emerald: #10b981; --emerald-dark: #059669; --danger: #ef4444; --saffron: #f59e0b;
+  --cream: #f8fafc; --white: #ffffff;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --border: rgba(2, 62, 138, 0.15);
+  --radius-xl: 24px; --radius-lg: 16px; --radius-md: 12px;
+  --shadow-sm: 0 10px 30px rgba(2,17,54,0.04);
+  --shadow-glow: 0 15px 35px rgba(0, 180, 216, 0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--ink); display: flex; height: 100vh; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal-300); }
+
+/* ════════ LAYOUT & SIDEBAR ════════ */
+.sidebar { width: 280px; background: linear-gradient(-45deg, var(--teal-950), var(--teal-900), #012a4a, #001f3f); color: #fff; display: flex; flex-direction: column; position: relative; z-index: 20; }
+.sidebar-brand { padding: 32px 24px 24px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.sidebar-brand span { background: linear-gradient(90deg, var(--gold-light), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sidebar-nav { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.nav-item { padding: 14px 18px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+.nav-item i { font-size: 20px; }
+.nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+.nav-item.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: inset 4px 0 0 var(--gold-light); }
+
+/* ════════ MAIN CONTENT ════════ */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: radial-gradient(circle at top right, var(--teal-50) 0%, var(--cream) 100%); }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.5); position: sticky; top: 0; z-index: 10; }
+.header-name { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+.hdr-btn { cursor: pointer; font-size: 20px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); color: var(--teal-900); transition: 0.2s; background: #fff;}
+.hdr-btn:hover { border-color: var(--teal-300); background: var(--teal-50); }
+
+/* ════════ ZISWAF UNIQUE UI ════════ */
+.page-container { padding: 40px; max-width: 1200px; width: 100%; margin: 0 auto; position: relative; }
+
+/* Hero Banner Spesifik */
+.zis-hero {
+  background: linear-gradient(135deg, #012a4a, #00509e);
+  border-radius: var(--radius-xl); padding: 48px; color: #fff;
+  position: relative; overflow: hidden; margin-bottom: 32px;
+  box-shadow: 0 20px 40px rgba(0, 80, 158, 0.2);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.zis-hero::after {
+  content: ''; position: absolute; right: 0; top: 0; width: 50%; height: 100%;
+  background: radial-gradient(circle at right, rgba(255,255,255,0.1) 0%, transparent 70%);
+}
+.zis-text { position: relative; z-index: 2; max-width: 600px; }
+.zis-title { font-size: 36px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
+.zis-desc { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.8); }
+.arab-bg { font-family: 'Amiri', serif; font-size: 140px; position: absolute; right: 20px; top: -10px; color: rgba(255,255,255,0.05); pointer-events: none; }
+
+/* 4 Pillars Grid (Menu Utama ZISWAF) */
+.pillar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+.pillar-card {
+  background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+  border: 1px solid var(--border); border-radius: var(--radius-xl);
+  padding: 32px 24px; text-align: center; cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative; overflow: hidden;
+}
+.pillar-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; opacity: 0; transition: 0.3s; }
+.pillar-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-glow); background: #fff; }
+.pillar-card:hover::before { opacity: 1; }
+.pillar-card.active { transform: translateY(-5px); border-color: transparent; background: #fff; box-shadow: var(--shadow-glow); }
+.pillar-card.active::before { opacity: 1; }
+
+/* Warna spesifik tiap pilar */
+.pc-zakat::before { background: var(--teal-900); }
+.pc-zakat .pc-icon { color: var(--teal-900); background: var(--teal-100); }
+.pc-zakat.active { border: 2px solid var(--teal-900); }
+
+.pc-infak::before { background: var(--emerald-dark); }
+.pc-infak .pc-icon { color: var(--emerald-dark); background: #d1fae5; }
+.pc-infak.active { border: 2px solid var(--emerald-dark); }
+
+.pc-sedekah::before { background: var(--teal-500); }
+.pc-sedekah .pc-icon { color: var(--teal-500); background: var(--teal-50); }
+.pc-sedekah.active { border: 2px solid var(--teal-500); }
+
+.pc-wakaf::before { background: var(--saffron); }
+.pc-wakaf .pc-icon { color: var(--saffron); background: #fef3c7; }
+.pc-wakaf.active { border: 2px solid var(--saffron); }
+
+.pc-icon { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; transition: transform 0.3s; }
+.pillar-card:hover .pc-icon { transform: scale(1.1); }
+.pc-title { font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+.pc-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; font-weight: 500; }
+
+/* ════════ DYNAMIC WIZARD AREA ════════ */
+.wizard-area {
+  background: #fff; border-radius: var(--radius-xl); border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm); padding: 40px; display: none;
+  animation: popIn 0.5s ease; position: relative; overflow: hidden;
+}
+@keyframes popIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.wizard-header { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.wiz-title { font-size: 24px; font-weight: 800; color: var(--ink); }
+.wiz-subtitle { font-size: 14px; color: var(--ink-soft); margin-top: 4px; }
+
+/* Stepper Progress */
+.stepper-nav { display: flex; gap: 12px; }
+.step-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border); transition: 0.3s; }
+.step-dot.active { background: var(--teal-900); transform: scale(1.3); }
+
+/* Form Elements */
+.form-step { display: none; animation: popIn 0.4s ease; }
+.form-step.active { display: block; }
+
+.form-group { margin-bottom: 24px; }
+.form-label { display: block; font-size: 14px; font-weight: 700; color: var(--ink-mid); margin-bottom: 8px; }
+.form-control { width: 100%; padding: 16px; border: 2px solid var(--border); border-radius: var(--radius-md); font-family: inherit; font-size: 15px; color: var(--ink); background: var(--cream); transition: 0.3s; }
+.form-control:focus { outline: none; border-color: var(--teal-500); background: #fff; box-shadow: 0 0 0 4px rgba(0,150,199,0.1); }
+select.form-control { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 48px; }
+textarea.form-control { min-height: 120px; resize: vertical; }
+
+.input-suffix { position: relative; }
+.input-suffix .form-control { padding-left: 56px; }
+.input-suffix span { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 15px; font-weight: 800; color: var(--ink-soft); }
+
+/* Radio Cards (For Programs/Payment) */
+.radio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.radio-card {
+  border: 2px solid var(--border); border-radius: var(--radius-md); padding: 16px;
+  cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 16px; background: var(--cream);
+}
+.radio-card:hover { border-color: var(--teal-300); background: #fff; }
+.radio-card.selected { border-color: var(--teal-900); background: var(--teal-50); box-shadow: 0 4px 15px rgba(2,62,138,0.1); }
+.rc-icon { font-size: 24px; color: var(--teal-700); }
+.rc-info h4 { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.rc-info p { font-size: 12px; color: var(--ink-soft); }
+.radio-card.saldo-card { border-color: var(--emerald-dark); background: #f0fdf4; }
+
+/* Toggle Anonim */
+.toggle-wrap { display: flex; align-items: center; gap: 12px; margin-top: 12px; cursor: pointer; }
+.toggle-wrap input { width: 18px; height: 18px; accent-color: var(--teal-900); cursor: pointer; }
+.toggle-label { font-size: 14px; font-weight: 600; color: var(--ink-mid); }
+
+/* Niat Section */
+.niat-box { background: linear-gradient(to right, var(--teal-50), #fff); border-left: 4px solid var(--teal-700); padding: 32px; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; margin: 24px 0; text-align: center; }
+.niat-arab { font-family: 'Amiri', serif; font-size: 28px; color: var(--teal-900); margin-bottom: 16px; line-height: 2; }
+.niat-latin { font-size: 14px; font-style: italic; color: var(--ink-soft); margin-bottom: 12px; }
+.niat-arti { font-size: 14px; font-weight: 600; color: var(--ink-mid); }
+
+/* Wakaf Khusus */
+.upload-zone { border: 2px dashed var(--teal-300); border-radius: var(--radius-lg); padding: 32px; text-align: center; cursor: pointer; background: var(--cream); transition: 0.3s; position: relative; }
+.upload-zone:hover { border-color: var(--teal-700); background: #fff; }
+.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.upload-zone i { font-size: 32px; color: var(--teal-500); margin-bottom: 12px; display: block; }
+.upload-zone .uz-text { font-size: 14px; font-weight: 700; color: var(--ink); }
+.upload-zone .uz-sub { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+
+/* Buttons */
+.btn-row { display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; border-top: 1px solid var(--border); padding-top: 24px; }
+.btn-nav { padding: 14px 24px; border-radius: var(--radius-md); font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; border: none; }
+.btn-prev { background: var(--cream); color: var(--ink-mid); border: 2px solid var(--border); }
+.btn-prev:hover { background: #e2e8f0; }
+.btn-next { background: var(--teal-900); color: #fff; }
+.btn-next:hover { background: var(--teal-700); box-shadow: 0 10px 20px rgba(2,62,138,0.2); transform: translateY(-2px); }
+
+/* Modal Receipt */
+.modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); z-index: 9000; display: none; align-items: center; justify-content: center; }
+.receipt-card { background: #fff; width: 100%; max-width: 400px; border-radius: var(--radius-xl); overflow: hidden; animation: popIn 0.4s ease; text-align: center; position: relative; }
+.rcpt-header { background: var(--emerald-dark); padding: 32px 24px 40px; color: #fff; }
+.rcpt-header i { font-size: 48px; margin-bottom: 12px; }
+.rcpt-header h3 { font-size: 24px; font-weight: 800; }
+.rcpt-body { padding: 0 24px 24px; background: #fff; margin-top: -20px; border-radius: 20px 20px 0 0; position: relative; }
+.rcpt-amount { font-family: 'DM Mono', monospace; font-size: 32px; font-weight: 800; color: var(--ink); padding: 24px 0; border-bottom: 1px dashed var(--border); }
+.rcpt-detail { padding: 16px 0; display: flex; flex-direction: column; gap: 12px; }
+.rd-row { display: flex; justify-content: space-between; font-size: 14px; }
+.rd-label { color: var(--ink-soft); }
+.rd-val { font-weight: 700; color: var(--ink); }
+.rcpt-footer { padding: 24px; background: var(--cream); }
+
+/* Loader & Toast */
+#loader-overlay { position: fixed; inset: 0; background: var(--cream); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.spinner { width: 40px; height: 40px; border: 4px solid var(--teal-100); border-top: 4px solid var(--teal-900); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.toast { position: fixed; top: 40px; right: 40px; background: var(--teal-900); color: #fff; padding: 16px 24px; border-radius: var(--radius-lg); font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 9999; opacity: 0; transform: translateY(-20px); transition: 0.4s; display: flex; align-items: center; gap: 12px; }
+.toast.error { background: var(--danger); }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  .pillar-grid { grid-template-columns: repeat(2, 1fr); }
+  .radio-grid { grid-template-columns: 1fr; }
+  .zis-hero { flex-direction: column; text-align: center; padding: 32px 24px; }
+  .arab-bg { display: none; }
+  .page-container { padding: 24px; }
+  .wizard-area { padding: 24px; }
+}
+@media (max-width: 480px) {
+  .pillar-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+  <div id="loader-overlay">
+    <div class="spinner"></div>
+    <div style="font-weight: 700; color: var(--teal-900);">Memuat Portal...</div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">BMT Syahidah<br><span style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">Portal Anggota</span></div>
+    <nav class="sidebar-nav">
+       <a href="portal.html" class="nav-item"><i class="ph ph-house"></i> Beranda</a>
+       <a href="dashboard.html" class="nav-item"><i class="ph ph-chart-line-up"></i> Dashboard Wakaf</a>
+       <a href="simpanan.html" class="nav-item"><i class="ph ph-wallet"></i> Simpanan</a>
+       <a href="pembiayaan.html" class="nav-item"><i class="ph ph-handshake"></i> Pembiayaan</a>
+       <a href="ziswakaf.html" class="nav-item active"><i class="ph ph-leaf"></i> ZIS & Wakaf</a>
+       <a href="riwayat.html" class="nav-item"><i class="ph ph-receipt"></i> Riwayat Transaksi</a>
+       <a href="profil.html" class="nav-item"><i class="ph ph-user"></i> Profil Akun</a>
+    </nav>
+  </aside>
+
+  <div class="main-content">
+    <header class="header">
+      <div class="header-name">Layanan ZIS & Wakaf</div>
+      <div class="header-right">
+        <button class="hdr-btn" id="btnLogout" title="Keluar"><i class="ph ph-sign-out"></i></button>
+      </div>
+    </header>
+
+    <div class="page-container">
+      
+      <div class="zis-hero">
+        <div class="zis-text">
+          <div class="zis-title">Pilar Kebaikan Umat</div>
+          <div class="zis-desc">Salurkan Zakat, Infak, Sedekah, dan Wakaf Anda secara digital. Amanah, transparan, dan terintegrasi penuh untuk kemaslahatan bersama.</div>
+        </div>
+        <div class="arab-bg">زكاة صدقة</div>
+      </div>
+
+      <!-- 4 Pillars Menu -->
+      <div class="pillar-grid">
+        <div class="pillar-card pc-zakat" onclick="openWizard('zakat', this)">
+          <div class="pc-icon"><i class="ph ph-scales"></i></div>
+          <div class="pc-title">Zakat</div>
+          <div class="pc-desc">Wajib bagi yang mampu. Fitrah & Maal.</div>
+        </div>
+        <div class="pillar-card pc-infak" onclick="openWizard('infak', this)">
+          <div class="pc-icon"><i class="ph ph-hand-coins"></i></div>
+          <div class="pc-title">Infak</div>
+          <div class="pc-desc">Fleksibel untuk kebaikan tanpa batas waktu.</div>
+        </div>
+        <div class="pillar-card pc-sedekah" onclick="openWizard('sedekah', this)">
+          <div class="pc-icon"><i class="ph ph-heart-straight"></i></div>
+          <div class="pc-title">Sedekah</div>
+          <div class="pc-desc">Pilih program kemanusiaan & pendidikan.</div>
+        </div>
+        <div class="pillar-card pc-wakaf" onclick="openWizard('wakaf', this)">
+          <div class="pc-icon"><i class="ph ph-buildings"></i></div>
+          <div class="pc-title">Wakaf</div>
+          <div class="pc-desc">Pahala abadi melalui aset & wakaf tunai.</div>
+        </div>
+      </div>
+
+      <!-- WIZARD AREA (Dynamic Content) -->
+      <div class="wizard-area" id="wizard-area">
+        <div class="wizard-header">
+          <div>
+            <div class="wiz-title" id="wiz-title">Judul Formulir</div>
+            <div class="wiz-subtitle" id="wiz-desc">Deskripsi formulir</div>
+          </div>
+          <div class="stepper-nav" id="wiz-stepper">
+            <!-- Dinamis via JS -->
+          </div>
+        </div>
+
+        <div id="wiz-content">
+          <!-- Diinjeksi oleh JavaScript berdasarkan pilihan Pilar dan Step -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal E-Receipt -->
+  <div class="modal-overlay" id="receipt-modal">
+    <div class="receipt-card">
+      <div class="rcpt-header">
+        <i class="ph ph-check-circle"></i>
+        <h3>Alhamdulillah</h3>
+        <p style="font-size:14px; opacity:0.9;">Transaksi Berhasil</p>
+      </div>
+      <div class="rcpt-body">
+        <div class="rcpt-amount" id="rcpt-nominal">Rp 0</div>
+        <div class="rcpt-detail">
+          <div class="rd-row"><span class="rd-label">Jenis Transaksi</span><span class="rd-val" id="rcpt-jenis">-</span></div>
+          <div class="rd-row"><span class="rd-label">Nama Muzakki/Wakif</span><span class="rd-val" id="rcpt-nama">-</span></div>
+          <div class="rd-row"><span class="rd-label">Metode Pembayaran</span><span class="rd-val" id="rcpt-metode">-</span></div>
+          <div class="rd-row"><span class="rd-label">Waktu</span><span class="rd-val" id="rcpt-waktu">-</span></div>
+        </div>
+      </div>
+      <div class="rcpt-footer">
+        <button class="btn-nav btn-next" style="width:100%; justify-content:center;" onclick="closeReceipt()">Selesai & Tutup</button>
+        <p style="font-size:12px; color:var(--ink-soft); margin-top:16px;">Bukti Setor (BSZ) resmi telah dikirim ke email Anda.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast-el">Pesan</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDavwMxnuG-XqoR0zzlQWLyxC7Taf1DIeI",
+      authDomain: "bmtuwin.firebaseapp.com",
+      projectId: "bmtuwin",
+      storageBucket: "bmtuwin.firebasestorage.app",
+      messagingSenderId: "654364047353",
+      appId: "1:654364047353:web:385871ac2db1d52392ef28"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUserUid = null;
+    let currentUserData = null;
+    let currentPillar = '';
+    let currentStep = 1;
+    let maxSteps = 3;
+
+    // Mapping program wakaf ID (harus sesuai dengan dokumen di koleksi wakaf_programs)
+    const wakafProgramMap = {
+      "prog-masjid": "Pembangunan Sarana Ibadah",
+      "prog-air": "Infrastruktur Air Bersih",
+      "prog-umkm": "Modal Produktif Kaum Duafa"
+    };
+
+    // --- STATE TRANSAKSI ---
+    let txData = {
+      jenis: '', 
+      program: '', 
+      programId: '', // untuk wakaf, simpan ID program
+      nominal: 0, 
+      nama: '', 
+      anonim: false, 
+      metode: '', 
+      npwp: '', 
+      wakafTipe: 'uang'
+    };
+
+    // --- DATA NIAT ---
+    const niatData = {
+      zakat: {
+        arab: "ﻧَﻮَﻳْﺖُ أَﻥْ أُﺧْﺮِﺝَ ﺯَﻛَﺎﺓَ ﺍﻟْﻔِﻄْﺮِ/الْمَالِ ﻋَﻦْ ﻧَﻔْﺴِﻲْ ﻓَﺮْﺿًﺎ ﻟﻠﻪِ ﺗَﻌَﺎﻟَﻰ",
+        latin: "Nawaitu an ukhrija zakaatal fitri/maali 'an nafsii fardhan lillaahi ta'aalaa",
+        arti: "Aku niat mengeluarkan zakat fitrah/maal untuk diriku sendiri fardhu karena Allah Ta'ala."
+      },
+      infak: {
+        arab: "نَوَیْتُ اَنْ اُنْفِقَ هَذَا الْمَالِ لِلهِ تَعَالَى",
+        latin: "Nawaitu an unfiqa haadzal maali lillaahi ta'aalaa",
+        arti: "Aku berniat menginfakkan sebagian harta ini karena Allah Ta'ala."
+      },
+      sedekah: {
+        arab: "نَوَیْتُ اَنْ أَتَصَدَّقَ هَذَا الْمَالِ لِلهِ تَعَالَى",
+        latin: "Nawaitu an atashaddaqa haadzal maali lillaahi ta'aalaa",
+        arti: "Aku berniat bersedekah dengan harta ini karena Allah Ta'ala."
+      },
+      wakaf: {
+        arab: "نَوَيْتُ اَنْ اَقِفَ هَذَا الْمَالِ/الْأَشْيَاءِ لِلهِ تَعَالَى",
+        latin: "Nawaitu an aqifa haadzal maali/asy-yaai lillaahi ta'aalaa",
+        arti: "Aku berniat mewakafkan harta/barang ini karena Allah Ta'ala."
+      }
+    };
+
+    // --- ON LOAD ---
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUserUid = user.uid;
+        const userRef = doc(db, 'users', user.uid);
+        const snap = await getDoc(userRef);
+        if(snap.exists()){
+          currentUserData = snap.data();
+          txData.nama = currentUserData.namaLengkap || 'Hamba Allah';
+        }
+        document.getElementById('loader-overlay').style.display = 'none';
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    // --- WIZARD NAVIGATION ---
+    window.openWizard = function(type, el) {
+      document.querySelectorAll('.pillar-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      
+      const area = document.getElementById('wizard-area');
+      area.style.display = 'block';
+      area.style.animation = 'none';
+      area.offsetHeight; // trigger reflow
+      area.style.animation = 'popIn 0.5s ease';
+
+      currentPillar = type;
+      currentStep = 1;
+      txData = { 
+        jenis: type, 
+        program: '', 
+        programId: '', 
+        nominal: 0, 
+        nama: currentUserData?.namaLengkap || '', 
+        anonim: false, 
+        metode: '', 
+        npwp: '', 
+        wakafTipe: 'uang' 
+      };
+      
+      const titles = {
+        zakat: { t: "Tunaikan Zakat", d: "Pilih jenis zakat dan hitung kewajiban Anda." },
+        infak: { t: "Berbagi Infak", d: "Salurkan infak terbaik Anda tanpa batasan." },
+        sedekah: { t: "Sedekah Spesifik", d: "Pilih program sedekah untuk disalurkan." },
+        wakaf: { t: "Wakaf Produktif & Aset", d: "Pahala jariyah yang manfaatnya terus mengalir." }
+      };
+
+      document.getElementById('wiz-title').textContent = titles[type].t;
+      document.getElementById('wiz-desc').textContent = titles[type].d;
+
+      maxSteps = (type === 'zakat' || type === 'wakaf') ? 4 : 3;
+      renderWizard();
+    }
+
+    window.nextStep = function() {
+      if(validateStep()) {
+        currentStep++;
+        renderWizard();
+      }
+    }
+
+    window.prevStep = function() {
+      if(currentStep > 1) {
+        currentStep--;
+        renderWizard();
+      }
+    }
+
+    // --- WIZARD RENDERER ---
+    function renderWizard() {
+      let dots = '';
+      for(let i=1; i<=maxSteps; i++){
+        dots += `<div class="step-dot ${i<=currentStep ? 'active' : ''}"></div>`;
+      }
+      document.getElementById('wiz-stepper').innerHTML = dots;
+
+      const contentDiv = document.getElementById('wiz-content');
+      let html = `<div class="form-step active">`;
+
+      if(currentPillar === 'zakat') {
+        if(currentStep === 1) html += renderZakatStep1();
+        if(currentStep === 2) html += renderIdentityStep();
+        if(currentStep === 3) html += renderNiatStep();
+        if(currentStep === 4) html += renderPaymentStep();
+      } 
+      else if(currentPillar === 'infak') {
+        if(currentStep === 1) html += renderInfakStep1();
+        if(currentStep === 2) html += renderNiatStep();
+        if(currentStep === 3) html += renderPaymentStep(true);
+      }
+      else if(currentPillar === 'sedekah') {
+        if(currentStep === 1) html += renderSedekahStep1();
+        if(currentStep === 2) html += renderNiatStep();
+        if(currentStep === 3) html += renderPaymentStep();
+      }
+      else if(currentPillar === 'wakaf') {
+        if(currentStep === 1) html += renderWakafStep1();
+        if(currentStep === 2) html += (txData.wakafTipe === 'uang') ? renderIdentityStep() : renderWakafBarangStep2();
+        if(currentStep === 3) html += (txData.wakafTipe === 'uang') ? renderNiatStep() : renderWakafBarangStep3();
+        if(currentStep === 4 && txData.wakafTipe === 'uang') html += renderPaymentStep();
+      }
+
+      // Buttons
+      html += `<div class="btn-row">`;
+      if(currentStep > 1) html += `<button class="btn-nav btn-prev" onclick="prevStep()"><i class="ph ph-arrow-left"></i> Kembali</button>`;
+      
+      const isLastStep = (currentStep === maxSteps) || (currentPillar === 'wakaf' && txData.wakafTipe === 'barang' && currentStep === 3);
+      
+      if(isLastStep) {
+        html += `<button class="btn-nav btn-next" id="submit-btn" onclick="submitTransaction()"><i class="ph ph-check-circle"></i> Selesaikan Akad</button>`;
+      } else {
+        html += `<button class="btn-nav btn-next" onclick="nextStep()">Selanjutnya <i class="ph ph-arrow-right"></i></button>`;
+      }
+      html += `</div></div>`;
+
+      contentDiv.innerHTML = html;
+    }
+
+    // --- HTML GENERATORS PER STEP ---
+    function renderZakatStep1() {
+      return `
+        <div class="form-group">
+          <label class="form-label">Pilih Jenis Zakat</label>
+          <div class="radio-grid">
+            <div class="radio-card ${txData.program==='Fitrah'?'selected':''}" onclick="setTx('program','Fitrah')">
+              <div class="rc-icon"><i class="ph ph-bag"></i></div>
+              <div class="rc-info"><h4>Zakat Fitrah</h4><p>Setara beras 2.5kg / Rp 45.000 jiwa</p></div>
+            </div>
+            <div class="radio-card ${txData.program==='Maal'?'selected':''}" onclick="setTx('program','Maal')">
+              <div class="rc-icon"><i class="ph ph-coins"></i></div>
+              <div class="rc-info"><h4>Zakat Maal (Penghasilan)</h4><p>Kewajiban 2.5% jika capai Nisab</p></div>
+            </div>
+          </div>
+        </div>
+        ${txData.program === 'Maal' ? `
+          <div style="background:var(--teal-50); padding:16px; border-radius:var(--radius-md); margin-bottom:24px;">
+            <label class="form-label" style="color:var(--teal-900);">Kalkulator Zakat Penghasilan (Bulanan)</label>
+            <div class="input-suffix">
+              <input type="number" class="form-control" placeholder="Masukkan penghasilan kotor bulanan" oninput="calcZakat(this.value)">
+              <span>Rp</span>
+            </div>
+          </div>
+        ` : ''}
+        <div class="form-group">
+          <label class="form-label">Nominal Zakat</label>
+          <div class="input-suffix">
+            <input type="number" class="form-control" id="inp-nominal" value="${txData.nominal || ''}" placeholder="Masukkan nominal (Rp)">
+            <span>Rp</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderInfakStep1() {
+      return `
+        <div class="form-group">
+          <label class="form-label">Nominal Infak Terbaik Anda</label>
+          <div class="input-suffix">
+            <input type="number" class="form-control" id="inp-nominal" value="${txData.nominal || ''}" placeholder="Contoh: 50000">
+            <span>Rp</span>
+          </div>
+        </div>
+        ${renderIdentityStep(false)}
+      `;
+    }
+
+    function renderSedekahStep1() {
+      return `
+        <div class="form-group">
+          <label class="form-label">Pilih Program Sedekah</label>
+          <select class="form-control" onchange="setTx('program', this.value)">
+            <option value="">— Pilih Program —</option>
+            <option value="Sedekah Subuh" ${txData.program==='Sedekah Subuh'?'selected':''}>Sedekah Subuh</option>
+            <option value="Bantuan Kemanusiaan" ${txData.program==='Bantuan Kemanusiaan'?'selected':''}>Bantuan Kemanusiaan</option>
+            <option value="Pendidikan/Beasiswa" ${txData.program==='Pendidikan/Beasiswa'?'selected':''}>Pendidikan & Beasiswa</option>
+            <option value="Sedekah Umum" ${txData.program==='Sedekah Umum'?'selected':''}>Sedekah Umum (Kemaslahatan)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nominal Sedekah</label>
+          <div class="input-suffix">
+            <input type="number" class="form-control" id="inp-nominal" value="${txData.nominal || ''}" placeholder="Contoh: 100000">
+            <span>Rp</span>
+          </div>
+        </div>
+        ${renderIdentityStep(false)}
+      `;
+    }
+
+    function renderWakafStep1() {
+      return `
+        <div style="background:#fffbeb; border:1px solid #fde68a; padding:16px; border-radius:var(--radius-md); margin-bottom:24px;">
+          <h4 style="font-size:14px; color:#92400e; margin-bottom:8px;"><i class="ph ph-info"></i> Syarat & Ketentuan Wakaf</h4>
+          <ul style="font-size:12px; color:#b45309; padding-left:16px; line-height:1.6;">
+            <li>Harta milik sempurna dan berasal dari sumber halal.</li>
+            <li>Pokok harta tertahan, manfaatnya dialirkan untuk kebaikan.</li>
+          </ul>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bentuk Wakaf</label>
+          <div class="radio-grid">
+            <div class="radio-card ${txData.wakafTipe==='uang'?'selected':''}" onclick="setTx('wakafTipe','uang'); renderWizard();">
+              <div class="rc-icon"><i class="ph ph-money"></i></div>
+              <div class="rc-info"><h4>Wakaf Tunai (Uang)</h4><p>Fleksibel, mulai dari nominal kecil</p></div>
+            </div>
+            <div class="radio-card ${txData.wakafTipe==='barang'?'selected':''}" onclick="setTx('wakafTipe','barang'); renderWizard();">
+              <div class="rc-icon"><i class="ph ph-buildings"></i></div>
+              <div class="rc-info"><h4>Wakaf Aset / Properti</h4><p>Tanah, bangunan, kendaraan, dll</p></div>
+            </div>
+          </div>
+        </div>
+        ${txData.wakafTipe === 'uang' ? `
+          <div class="form-group">
+            <label class="form-label">Program Wakaf Tunai</label>
+            <select class="form-control" id="inp-program" onchange="setTx('programId', this.value); setTx('program', this.options[this.selectedIndex].text)">
+              <option value="">— Pilih Sasaran Wakaf —</option>
+              ${Object.entries(wakafProgramMap).map(([id, name]) => 
+                `<option value="${id}" ${txData.programId === id ? 'selected' : ''}>${name}</option>`
+              ).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nominal Wakaf</label>
+            <div class="input-suffix">
+              <input type="number" class="form-control" id="inp-nominal" value="${txData.nominal || ''}" placeholder="Contoh: 1000000">
+              <span>Rp</span>
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderWakafBarangStep2() {
+      return `
+        <div class="form-group">
+          <label class="form-label">Detail Aset / Properti</label>
+          <input type="text" class="form-control" id="inp-namaBarang" placeholder="Contoh: Sebidang tanah 100m2 di Ciputat" style="margin-bottom:12px;">
+          <textarea class="form-control" id="inp-descBarang" placeholder="Jelaskan kondisi dan alamat lengkap aset..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Upload Foto / Dokumen Aset (Sertifikat)</label>
+          <div class="upload-zone">
+            <input type="file" accept="image/*,application/pdf">
+            <i class="ph ph-cloud-arrow-up"></i>
+            <div class="uz-text">Klik atau seret file ke sini</div>
+            <div class="uz-sub">Maksimal 5MB (JPG/PNG/PDF)</div>
+          </div>
+        </div>
+        <div style="font-size:12px; color:var(--ink-soft); line-height:1.5;">
+          <strong>Catatan:</strong> Untuk aset properti (mobilisasi rendah), tim BMT akan melakukan survei lokasi setelah pengajuan disetujui.
+        </div>
+      `;
+    }
+
+    function renderWakafBarangStep3() {
+      return `
+        ${renderIdentityStep(false)}
+        <div class="niat-box" style="margin-top:24px;">
+          <div class="niat-arab">${niatData.wakaf.arab}</div>
+          <div class="niat-latin">${niatData.wakaf.latin}</div>
+          <div class="niat-arti">"${niatData.wakaf.arti}"</div>
+        </div>
+      `;
+    }
+
+    function renderIdentityStep(wrapInGroup = true) {
+      let content = `
+        <div class="form-group">
+          <label class="form-label">Nama Lengkap ${currentPillar === 'zakat' ? 'Muzakki' : 'Pemberi'}</label>
+          <input type="text" class="form-control" id="inp-nama" value="${txData.anonim ? 'Hamba Allah' : txData.nama}" ${txData.anonim ? 'disabled' : ''}>
+          <label class="toggle-wrap">
+            <input type="checkbox" onchange="toggleAnonim(this.checked)" ${txData.anonim ? 'checked' : ''}>
+            <span class="toggle-label">Sembunyikan nama (Hamba Allah)</span>
+          </label>
+        </div>
+      `;
+      if(currentPillar === 'zakat') {
+        content += `
+          <div class="form-group">
+            <label class="form-label">NPWP (Opsional - Untuk Pengurang Pajak)</label>
+            <input type="text" class="form-control" id="inp-npwp" value="${txData.npwp}" placeholder="Format: 12.345.678.9-012.000">
+          </div>
+        `;
+      }
+      return wrapInGroup ? `<div>${content}</div>` : content;
+    }
+
+    function renderNiatStep() {
+      const data = niatData[currentPillar];
+      return `
+        <div style="text-align:center; padding: 20px 0;">
+          <h3 style="font-size:18px; color:var(--ink); margin-bottom:8px;">Lafaz Niat ${currentPillar.charAt(0).toUpperCase() + currentPillar.slice(1)}</h3>
+          <p style="font-size:14px; color:var(--ink-soft);">Silakan baca niat berikut di dalam hati untuk mengesahkan akad.</p>
+          <div class="niat-box">
+            <div class="niat-arab">${data.arab}</div>
+            <div class="niat-latin">${data.latin}</div>
+            <div class="niat-arti">"${data.arti}"</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPaymentStep(allowSaldo = false) {
+      const userSaldo = currentUserData?.totalSaldo || 0;
+      let html = `
+        <div class="form-group">
+          <label class="form-label">Pilih Metode Pembayaran Elektronik</label>
+          <div class="radio-grid">
+      `;
+      
+      if(allowSaldo) {
+        const saldoCukup = userSaldo >= txData.nominal;
+        html += `
+          <div class="radio-card saldo-card ${txData.metode==='saldo'?'selected':''}" style="${!saldoCukup?'opacity:0.5; cursor:not-allowed':''}" onclick="${saldoCukup ? `setTx('metode','saldo')` : `showToast('Saldo BMT tidak mencukupi','error')`}">
+            <div class="rc-icon"><i class="ph ph-wallet"></i></div>
+            <div class="rc-info">
+              <h4>Saldo Rekening BMT</h4>
+              <p>Tersedia: Rp ${userSaldo.toLocaleString('id-ID')}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      html += `
+            <div class="radio-card ${txData.metode==='qris'?'selected':''}" onclick="setTx('metode','qris')">
+              <div class="rc-icon"><i class="ph ph-qr-code"></i></div>
+              <div class="rc-info"><h4>QRIS</h4><p>Gopay, OVO, Dana, LinkAja</p></div>
+            </div>
+            <div class="radio-card ${txData.metode==='va'?'selected':''}" onclick="setTx('metode','va')">
+              <div class="rc-icon"><i class="ph ph-bank"></i></div>
+              <div class="rc-info"><h4>Virtual Account</h4><p>BSI, Mandiri, BCA</p></div>
+            </div>
+          </div>
+        </div>
+      `;
+      return html;
+    }
+
+    // --- ACTIONS & LOGIC ---
+    window.setTx = function(key, val) {
+      txData[key] = val;
+      renderWizard(); // Re-render for visual feedback
+    }
+
+    window.toggleAnonim = function(checked) {
+      txData.anonim = checked;
+      txData.nama = checked ? 'Hamba Allah' : (currentUserData?.namaLengkap || '');
+      renderWizard();
+    }
+
+    window.calcZakat = function(val) {
+      const inc = parseInt(val) || 0;
+      const z = Math.floor(inc * 0.025);
+      txData.nominal = z;
+      const inp = document.getElementById('inp-nominal');
+      if(inp) inp.value = z;
+    }
+
+    function validateStep() {
+      if(currentStep === 1) {
+        if(currentPillar !== 'wakaf' || txData.wakafTipe === 'uang') {
+          const nom = document.getElementById('inp-nominal');
+          if(nom) txData.nominal = parseInt(nom.value);
+          
+          if(currentPillar === 'zakat' && !txData.program) return err("Pilih jenis zakat");
+          if(currentPillar === 'sedekah' && !txData.program) return err("Pilih program sedekah");
+          if(currentPillar === 'wakaf' && txData.wakafTipe === 'uang') {
+            if(!txData.programId) return err("Pilih sasaran wakaf");
+          }
+          if(!txData.nominal || txData.nominal <= 0) return err("Masukkan nominal yang valid");
+        }
+      }
+      
+      const isIdentityStep = (currentPillar === 'zakat' && currentStep === 2) || 
+                             (currentPillar === 'infak' && currentStep === 1) ||
+                             (currentPillar === 'sedekah' && currentStep === 1) ||
+                             (currentPillar === 'wakaf' && txData.wakafTipe === 'uang' && currentStep === 2);
+                             
+      if(isIdentityStep) {
+        const nm = document.getElementById('inp-nama');
+        if(nm) txData.nama = nm.value;
+        if(currentPillar === 'zakat') txData.npwp = document.getElementById('inp-npwp').value;
+        if(!txData.nama) return err("Nama tidak boleh kosong");
+      }
+
+      if(currentPillar === 'wakaf' && txData.wakafTipe === 'barang' && currentStep === 2) {
+        const brg = document.getElementById('inp-namaBarang').value;
+        if(!brg) return err("Mohon isi detail aset");
+        txData.program = "Wakaf Aset: " + brg;
+      }
+
+      return true;
+    }
+
+    window.submitTransaction = async function() {
+      const btn = document.getElementById('submit-btn');
+      if (!btn) return;
+      
+      if(currentPillar !== 'wakaf' || txData.wakafTipe === 'uang') {
+        if(!txData.metode) return err("Pilih metode pembayaran terlebih dahulu.");
+      } else {
+        const nm = document.getElementById('inp-nama');
+        if(nm) txData.nama = nm.value;
+        if(!txData.nama) return err("Nama tidak boleh kosong");
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Memproses...';
+
+      try {
+        const userRef = doc(db, "users", currentUserUid);
+        
+        // Jika metode saldo, kurangi saldo
+        if(txData.metode === 'saldo') {
+          const sisa = currentUserData.totalSaldo - txData.nominal;
+          await updateDoc(userRef, { totalSaldo: sisa });
+          currentUserData.totalSaldo = sisa;
+          
+          // Catat mutasi
+          await addDoc(collection(db, `users/${currentUserUid}/mutasi`), {
+            judul: `Pembayaran ${currentPillar.toUpperCase()}`,
+            nominal: txData.nominal,
+            tipe: 'keluar',
+            tanggal: serverTimestamp()
+          });
+        }
+
+        // Simpan riwayat ZISWAF
+        const docRef = await addDoc(collection(db, `users/${currentUserUid}/ziswaf`), {
+          jenis: currentPillar,
+          program: txData.program,
+          programId: txData.programId || null,
+          nominal: txData.nominal || 0,
+          nama_tertera: txData.nama,
+          metode: txData.metode || (txData.wakafTipe === 'barang' ? 'Survei Aset' : 'Transfer'),
+          tanggal: serverTimestamp()
+        });
+
+        // ⭐ SINKRONISASI: Update curr di wakaf_programs jika wakaf uang
+        if (currentPillar === 'wakaf' && txData.wakafTipe === 'uang' && txData.programId) {
+          const progRef = doc(db, 'wakaf_programs', txData.programId);
+          await updateDoc(progRef, {
+            curr: increment(txData.nominal)
+          });
+          console.log(`Program ${txData.programId} updated by +${txData.nominal}`);
+        }
+
+        showReceipt();
+
+      } catch (error) {
+        console.error(error);
+        showToast("Terjadi kesalahan sistem.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ph ph-check-circle"></i> Selesaikan Akad';
+      }
+    }
+
+    function err(msg) { showToast(msg, 'error'); return false; }
+
+    let tTimer;
+    window.showToast = function(msg, type = 'success') {
+      const el = document.getElementById('toast-el');
+      el.innerHTML = type === 'success' ? `<i class="ph ph-check-circle" style="font-size:20px; color:var(--emerald)"></i> ${msg}` : `<i class="ph ph-warning-circle" style="font-size:20px;"></i> ${msg}`;
+      if (type === 'error') el.classList.add('error'); else el.classList.remove('error');
+      el.classList.add('show');
+      clearTimeout(tTimer);
+      tTimer = setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
+    // --- RECEIPT MODAL ---
+    function showReceipt() {
+      const r = document.getElementById('receipt-modal');
+      document.getElementById('rcpt-nominal').textContent = txData.nominal > 0 ? `Rp ${txData.nominal.toLocaleString('id-ID')}` : 'Aset Properti';
+      document.getElementById('rcpt-jenis').textContent = currentPillar.toUpperCase() + (txData.program ? ` - ${txData.program}` : '');
+      document.getElementById('rcpt-nama').textContent = txData.nama;
+      
+      let met = txData.metode;
+      if(met === 'saldo') met = 'Saldo BMT';
+      else if(met === 'qris') met = 'QRIS E-Wallet';
+      else if(met === 'va') met = 'Virtual Account Bank';
+      else if(txData.wakafTipe === 'barang') met = 'Tindak Lanjut Survei';
+      else met = '-';
+      
+      document.getElementById('rcpt-metode').textContent = met;
+      
+      const d = new Date();
+      document.getElementById('rcpt-waktu').textContent = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+      
+      r.style.display = 'flex';
+    }
+
+    window.closeReceipt = function() {
+      document.getElementById('receipt-modal').style.display = 'none';
+      document.getElementById('wizard-area').style.display = 'none';
+      document.querySelectorAll('.pillar-card').forEach(c => c.classList.remove('active'));
+    }
+
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      signOut(auth).then(() => window.location.href = 'login.html');
+    });
+  </script>
+</body>
+</html>
